@@ -84,6 +84,19 @@ public function update_user() {
             $data['interests'] = $this->User_model->get_profile_ethnicities($profile_id);
         $this->load->view('admin/tabs/ethnicities', $data);
     }
+
+    public function core_values($user_id)
+    {
+
+        $profile_id = $this->User_model->get_profile_id_by_user($user_id);
+
+        if (!$profile_id) {
+            echo "Profile not found.";
+            return;
+        }
+            $data['interests'] = $this->User_model->get_profile_core_values($profile_id);
+        $this->load->view('admin/tabs/ethnicities', $data);
+    }
     public function view($user_id)
     {
         $data = array();

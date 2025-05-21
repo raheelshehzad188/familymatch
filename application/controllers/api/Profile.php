@@ -21,6 +21,32 @@ class Profile extends API_Controller {
     	$data = $_POST;
     if ($this->profile->id) {
     	        $result = $this->Profile_model->updateFamilyProfile($this->profile->id,$data);
+                if($result)
+                {
+                    $sur = array();
+                    foreach($data as $k=> $v)
+                    {
+
+                        if (strpos($k, 'suervey') !== false) {
+                            $exp = explode('-',$k);
+                            $sur[$exp[1]] = $v;
+                        }
+
+                    }
+                $user_id = $this->user_id;
+
+    foreach ($sur as $q=>$answer) {
+        $question_id = $q;
+        $option_id = $answer;
+
+        // Insert each answer
+        $this->db->insert('responses', [
+            'user_id' => $user_id,
+            'question_id' => $question_id,
+            'option_id' => $option_id
+        ]);
+    }
+                }
                 $this->validate_token();
                 $this->response([
             'status' => true,

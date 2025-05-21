@@ -18,6 +18,7 @@ if(isset($user->img))
     <button onclick="loadTab('survey')">Survey</button>
     <button onclick="loadTab('interst')">Interests</button>
     <button onclick="loadTab('ethnicities')">Ethnicities</button>
+    <button onclick="loadTab('core_values')">Core Values</button>
 </div>
 
 <div id="tab-content">Please select a tab.</div>

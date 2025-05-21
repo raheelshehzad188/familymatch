@@ -6,6 +6,30 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-dtachometer-alt"></i></div>
                                 Dashboard
                             </a>
+                            <div class="sb-sidenav-menu-heading">Cruds</div>
+                            <?php
+                            if(isset($cruds) && $cruds)
+                            {
+                                foreach ($cruds as $key => $value) {
+                                    $id = $value['id'];
+                                    ?>
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapse<?= $id ?>" aria-expanded="false" aria-controls="collapse<?= $id ?>">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                <?= $value['multi']; ?>
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse <?= (isset($controller) && $controller == 'crud' && isset($param1) && $param1 == $value['slug'])?'show':'' ?>" id="collapse<?= $id ?>" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link <?= ($controller == 'crud' && isset($method) && $method == 'all')?'active':'' ?>" href="<?= $this->admin_url.'crud/all/'.$value['slug']; ?>">All <?= $value['multi']; ?></a>
+                                    <a class="nav-link <?= (isset($method) && $method == 'add')?'active':'' ?>" href="<?= $this->admin_url.'crud/add/'.$value['slug']; ?>">Add <?= $value['single']; ?></a>
+                                </nav>
+                            </div>
+
+                                    <?php
+                                }
+                            }
+
+                            ?>
                             <div class="sb-sidenav-menu-heading">Interface</div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsebody" aria-expanded="false" aria-controls="collapsebody">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>

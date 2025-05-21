@@ -1,0 +1,21 @@
+{
+  "status": true,
+  "questions": [
+    {
+      "label": "What is your name?",
+      "type": "text",
+      "apiname": "name"
+    },
+    {
+      "label": "What is your birthdate?",
+      "type": "date",
+      "apiname": "dob"
+    },
+    {
+      "label": "Select your country",
+      "type": "select",
+      "apiname": "country",
+      "options": ["Pakistan", "India", "USA"]
+    }
+  ]
+}

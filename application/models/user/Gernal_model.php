@@ -14,11 +14,20 @@ class Gernal_model extends CI_Model {
     public function get_all_refferals() {
         return $this->db->get('referrals')->result_array();
     }
+    public function get_all_data($tbl) {
+        return $this->db->get($tbl)->result_array();
+    }
     public function get_all_body_types() {
         return $this->db->get('body_types')->result_array();
     }
     public function get_all_genders() {
         return $this->db->get('genders')->result_array();
+    }
+    public function get_all_ethnicities() {
+        return $this->db->get('ethnicities')->result_array();
+    }
+    public function get_all_interests() {
+        return $this->db->get('interests')->result_array();
     }
 
     // Update family profile

@@ -62,6 +62,15 @@ class MediaController extends API_Controller
 	    ];
 	    $this->db->insert('media', $data);
 	    $media_id = $this->db->insert_id();
+	    if(isset($_POST['type']) && $media_id)
+	    {
+	    	$type = $_POST['type'];
+	    	if($type == 'profile' ||$type == 'Profile')
+	    	{
+	    		$up = array('profile_pic'=>$media_id);
+	    		$this->db->where('id',$this->profile->id)->update('profiles',$up); 
+	    	}
+	    }
 	    $this->response([
             'status' => true,
             'media_id' => $media_id

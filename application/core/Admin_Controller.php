@@ -29,6 +29,7 @@ class Admin_Controller extends CI_Controller {
     public $admin = array(); 
     public $assets_url;
     public $admin_url;
+    public $para1 = '';
     public function full($view,$data = array())
     {
         if(!isset($data['assets_url']))
@@ -38,6 +39,10 @@ class Admin_Controller extends CI_Controller {
 
 
         $this->load->view($view,$data);
+    }
+    public function get_crud()
+    {
+        return$this->db->get('crud')->result_array();
     }
     public function admin($view,$data = array())
     {
@@ -54,8 +59,10 @@ class Admin_Controller extends CI_Controller {
             $data['title'] = $data['title'].' > '.SITE_NAME;
         }
         $data['admin'] = $this->admin;
+        $data['cruds'] = $this->get_crud();
         $data['controller'] = $this->router->fetch_class();
         $data['method'] = $this->router->fetch_method();
+        $data['param1'] = $this->para1;
         $data['content'] = $this->load->view($view,$data,true);
         $this->load->view(ADMIN_LAYOUT,$data);
     }

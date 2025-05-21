@@ -23,6 +23,43 @@ class API extends API_Controller {
             'data' => $co
         ], REST_Controller::HTTP_OK);
 }
+    public function options_get() {
+        $interests = $this->Gernal_model->get_all_interests();
+        $i = array();
+        foreach ($interests as $key => $value) {
+            $n = $value['title'];
+            unset($interests[$key]['title']);
+            $interests[$key]['name'] = $n;
+             $interests[$key]['image'] = base_url('uploads/interests/'.$interests[$key]['image']);
+        }
+        $data = $this->Gernal_model->get_all_refferals();//
+        $core_values = $this->Gernal_model->get_all_data('core_values');
+        $religions = $this->Gernal_model->get_all_data('religions');
+        foreach ($core_values as $key => $value) {
+
+             $core_values[$key]['image'] = base_url($core_values[$key]['img']);
+        }
+        $eth = $this->Gernal_model->get_all_ethnicities();
+        $body = $this->Gernal_model->get_all_body_types();
+        $quest = $this->Gernal_model->get_all_questions_with_options();
+        $ref = $data;
+        $co = array($ref,$religions,$body);
+        foreach ($quest['options'] as $key => $value) {
+            $op = array();
+            foreach($value as $kk=> $vv)
+            {
+                $op[] = array('id'=>$vv['id'],'name'=>$vv['option_text']);
+            }
+            $co[] = $op;
+        }
+        $co[] = $eth;
+        $co[] = $interests;
+        $co[] = $core_values;
+    $this->response([
+            'status' => true,
+            'data' => $co
+        ], REST_Controller::HTTP_OK);
+}
     public function states_get() {
         $d = $_GET;
         $co = $this->Gernal_model->get_states($d);

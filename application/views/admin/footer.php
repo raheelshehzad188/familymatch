@@ -57,6 +57,7 @@
             ?>
         <?php
             $this->load->view('flash_js');
+
         ?>
     </body>
 </html>

@@ -66,6 +66,15 @@ class User_model extends CI_Model {
     $query = $this->db->get();
     return $query->result();
 }
+    public function get_profile_core_values($profile_id)
+{
+    $this->db->select('e.name');
+    $this->db->from('profile_cvalues pi');
+    $this->db->join('core_values e', 'pi.val_id = e.id');  // Note: column name ethinc_id
+    $this->db->where('pi.profile_id', $profile_id);
+    $query = $this->db->get();
+    return $query->result();
+}
 
 
 

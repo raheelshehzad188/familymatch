@@ -19,7 +19,7 @@ class Survey_model extends CI_Model {
 
         $this->db->select('q.id, q.question, q.created_at, o.option_text');
         $this->db->from('survey_questions q');
-        $this->db->join('survey_options o', 'o.question_id = q.id');
+        $this->db->join('survey_options o', 'o.question_id = q.id','left');
         $this->db->order_by('q.id', 'DESC');
         $query = $this->db->get();
 
@@ -61,26 +61,7 @@ public function delete_question($id) {
 
     return true;
 }
-public function get_all_responses()
-    {
-        $this->db->select('
-            u.id as user_id,
-            u.name as user_name,
-            q.id as question_id,
-            q.question,
-            o.id as option_id,
-            o.option_text,
-            r.created_at
-        ');
-        $this->db->from('responses r');
-        $this->db->join('users u', 'u.id = r.user_id');
-        $this->db->join('survey_questions q', 'q.id = r.question_id');
-        $this->db->join('survey_options o', 'o.id = r.option_id');
-        $this->db->order_by('r.user_id, q.id');
-        $query = $this->db->get();
 
-        return $query->result_array ();
-    }
 
 
 public function update_question($question_id, $question_text, $options) {
@@ -88,14 +69,11 @@ public function update_question($question_id, $question_text, $options) {
     $this->db->where('id', $question_id)->update('survey_questions', ['question' => $question_text]);
 
     // Remove all old options
+    $this->db->where('question_id', $question_id)->delete('survey_options');
 
     // Insert new options
     foreach ($options as $opt) {
-        $al = $this->db->where([
-                'question_id' => $question_id,
-                'option_text' => $opt
-            ])->get('survey_options')->row();
-        if (!empty($opt) && !$al) {
+        if (!empty($opt)) {
             $this->db->insert('survey_options', [
                 'question_id' => $question_id,
                 'option_text' => $opt

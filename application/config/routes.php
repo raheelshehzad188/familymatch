@@ -69,5 +69,6 @@ $route['api/questions']['GET'] = 'api/api/questions';
 $route['api/refferals']['GET'] = 'api/api/refferals';
 $route['api/body_types']['GET'] = 'api/api/body_types';
 $route['api/genders']['GET'] = 'api/api/genders';
+$route['api/options']['GET'] = 'api/api/options';
 
 

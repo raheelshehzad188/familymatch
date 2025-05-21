@@ -15,29 +15,29 @@ class Profile_model extends CI_Model {
         // Update family table
         $up = [];
 
-        if(isset($data['intersts']) && $data['intersts'])
+        if(isset($data['cvalues']) && $data['cvalues'])
         {
             
-            $intersts = explode(',', $data['intersts']); // IDs from request
+            $cvalues = explode(',', $data['cvalues']); // IDs from request
 $profile_id = $id;
 
 // Step 1: Get all existing interest IDs for the profile
-$existing = $this->db->select('interest_id')
+$existing = $this->db->select('val_id')
     ->where('profile_id', $profile_id)
-    ->get('profile_intersts')
+    ->get('profile_cvalues')
     ->result_array();
 
-$existing_ids = array_column($existing, 'interest_id');
+$existing_ids = array_column($existing, 'val_id');
 
 // Step 2: Calculate interests to insert and delete
-$to_insert = array_diff($intersts, $existing_ids);
-$to_delete = array_diff($existing_ids, $intersts);
+$to_insert = array_diff($cvalues, $existing_ids);
+$to_delete = array_diff($existing_ids, $cvalues);
 
 // Step 3: Delete removed interests
 if (!empty($to_delete)) {
     $this->db->where('profile_id', $profile_id);
-    $this->db->where_in('interest_id', $to_delete);
-    $this->db->delete('profile_intersts');
+    $this->db->where_in('val_id', $to_delete);
+    $this->db->delete('profile_cvalues');
 }
 
 // Step 4: Insert new interests
@@ -45,12 +45,12 @@ $insert_data = [];
 foreach ($to_insert as $interest_id) {
     $insert_data[] = [
         'profile_id' => $profile_id,
-        'interest_id' => $interest_id
+        'val_id' => $interest_id
     ];
 }
 
 if (!empty($insert_data)) {
-    $this->db->insert_batch('profile_intersts', $insert_data);
+    $this->db->insert_batch('profile_cvalues', $insert_data);
 }
 
         }
@@ -95,9 +95,14 @@ if (!empty($insert_data)) {
 
 
         }
+        //profile_cvalues
         if(isset($data['height']))
         {
             $up['height'] = $data['height'];
+        }
+        if(isset($data['religion_id']))
+        {
+            $up['religion_id'] = $data['religion_id'];
         }
         if(isset($data['reffer_id']))
         {
