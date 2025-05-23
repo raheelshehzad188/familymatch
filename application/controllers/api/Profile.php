@@ -18,17 +18,25 @@ class Profile extends API_Controller {
 
     // Update family profile
     public function update_profile_post() {
+
     	$data = $_POST;
+        $json = file_get_contents('php://input');
+
+        if(!$_POST && $json)
+        {
+            $data = json_decode($json,true);
+        }
     if ($this->profile->id) {
     	        $result = $this->Profile_model->updateFamilyProfile($this->profile->id,$data);
+
                 if($result)
                 {
                     $sur = array();
                     foreach($data as $k=> $v)
                     {
 
-                        if (strpos($k, 'suervey') !== false) {
-                            $exp = explode('-',$k);
+                        if (strpos($k, 'survey') !== false) {
+                            $exp = explode('_',$k);
                             $sur[$exp[1]] = $v;
                         }
 

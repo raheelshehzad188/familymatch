@@ -35,7 +35,14 @@ class API_Controller extends REST_Controller {
         $request_data = json_encode($this->input->get());
     } else {
         $request_data = json_encode($this->input->post());
+        $json = file_get_contents('php://input');
+
+        if(!$this->input->post() && $json)
+        {
+            $request_data = $json;
+        }
     }
+
 
     $response = ['status' => 'success', 'message' => 'API called successfully'];
 
@@ -52,7 +59,7 @@ class API_Controller extends REST_Controller {
         'request_headers' => $headers,
         'created_at' => date('Y-m-d H:i:s')
     ];
-    $this->insert_log($log_data);
+    $r = $this->insert_log($log_data);
 }
     public function insert_log($data)
     {
@@ -97,7 +104,7 @@ class API_Controller extends REST_Controller {
     {
         $this->user_id = $arr['user_id'];
         $this->profile = $this->getProfile($this->user_id);
-        if(!$this->profile || $this->user_id)
+        if(!$this->profile || !$this->user_id)
         {
             $this->response(['status' => false, 'message' => 'Unauthorized'], REST_Controller::HTTP_UNAUTHORIZED);
             return false;

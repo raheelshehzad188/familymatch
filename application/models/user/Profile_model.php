@@ -17,7 +17,6 @@ class Profile_model extends CI_Model {
 
         if(isset($data['cvalues']) && $data['cvalues'])
         {
-            
             $cvalues = explode(',', $data['cvalues']); // IDs from request
 $profile_id = $id;
 
@@ -100,6 +99,22 @@ if (!empty($insert_data)) {
         {
             $up['height'] = $data['height'];
         }
+        if(isset($data['city_id']))
+        {
+            $up['city_id'] = $data['city_id'];
+        }
+        if(isset($data['state_id']))
+        {
+            $up['state_id'] = $data['state_id'];
+        }
+        if(isset($data['country_id']))
+        {
+            $up['country_id'] = $data['country_id'];
+        }
+        if(isset($data['gender']))
+        {
+            $up['gender'] = $data['gender'];
+        }
         if(isset($data['religion_id']))
         {
             $up['religion_id'] = $data['religion_id'];
@@ -116,6 +131,10 @@ if (!empty($insert_data)) {
         {
             $up['bio'] = $data['bio'];
         }
+        if(isset($data['dob']))
+        {
+            $up['dob'] = date("Y-m-d", strtotime($data['dob']));
+        }
         if(isset($data['profile_pic']))
         {
             $up['profile_pic'] = $data['profile_pic'];
@@ -124,10 +143,13 @@ if (!empty($insert_data)) {
         {
             $up['country'] = $data['country'];
         }
+
         if(isset($data['body_type']))
         {
             $up['body_type'] = $data['body_type'];
         }
+        var_dump($id);
+        dd($up);
         $this->db->where('id', $id);
         $this->db->update('profiles', $up);
 
@@ -143,12 +165,13 @@ if (!empty($insert_data)) {
 
         // Update interests (optional)
         if (!empty($data['interests'])) {
-            $this->db->where('family_id', $data['family_id']);
-            $this->db->delete('family_interests');  // Remove existing interests
+            $this->db->where('profile_id', $profile_id);
+            $this->db->delete('profile_intersts');  // Remove existing interests
+            $i = explode(',',$data['interests']);
 
-            foreach ($data['interests'] as $interest_id) {
-                $this->db->insert('family_interests', [
-                    'family_id' => $data['family_id'],
+            foreach ($i as $interest_id) {
+                $this->db->insert('profile_intersts', [
+                    'profile_id' => $profile_id,
                     'interest_id' => $interest_id
                 ]);
             }

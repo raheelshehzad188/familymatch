@@ -38,6 +38,7 @@ class API extends API_Controller {
         foreach ($core_values as $key => $value) {
 
              $core_values[$key]['image'] = base_url($core_values[$key]['img']);
+             unset($core_values[$key]['img']);
         }
         $eth = $this->Gernal_model->get_all_ethnicities();
         $body = $this->Gernal_model->get_all_body_types();

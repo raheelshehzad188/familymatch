@@ -25,7 +25,7 @@ class User_model extends CI_Model {
         $data = array(
             'user_id' => $user_id,
             'full_name' => $full_name,
-            'dob' => $dob,
+            'dob' => date("Y-m-d", strtotime($dob)),
             'gender' => $gender,
             'family_preference' => $family_preference,
             'bio' => $bio,
