@@ -148,8 +148,6 @@ if (!empty($insert_data)) {
         {
             $up['body_type'] = $data['body_type'];
         }
-        var_dump($id);
-        dd($up);
         $this->db->where('id', $id);
         $this->db->update('profiles', $up);
 

@@ -6,6 +6,10 @@ class Login extends Admin_Controller {
 
     public function __construct() {
         parent::__construct();
+        if(isset($_SESSION['admin']))
+            {
+        redirect('admin/dashboard');
+            }
 
         // Load anything you need across all admin controllers
         $this->load->model('admin/Login_model');
