@@ -61,7 +61,14 @@ $route['api/email']['POST'] = 'api/api/email';
 $route['api/upload']['POST'] = 'api/mediaController/upload';
 $route['api/submit_survey']['POST'] = 'api/Profile/submit_survey';
 $route['api/update-profile']['POST'] = 'api/Profile/update_profile';
+$route['api/ignore-profile']['POST'] = 'api/Profile/ignore_profile';
+$route['api/like-profile']['POST'] = 'api/Profile/like_profile';
+$route['api/user-profile/(:any)'] = 'api/Profile/user_profile/$1';
+
+$route['api/likes']['GET'] = 'api/Profile/likes';
 $route['api/profile']['GET'] = 'api/Profile';
+$route['api/matches']['GET'] = 'api/Profile/matches';
+$route['api/user-matches/(:any)']['GET'] = 'api/Profile/user_matches/$1';
 $route['api/countries']['GET'] = 'api/api/countries';
 $route['api/states']['GET'] = 'api/api/states'; 
 $route['api/cities']['GET'] = 'api/api/cities';

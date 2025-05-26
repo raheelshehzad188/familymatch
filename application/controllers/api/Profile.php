@@ -9,14 +9,112 @@ class Profile extends API_Controller {
         $this->load->helper('url');
         $this->validate_token();
     }
-    public function index_get() {
+    public function matches_get() {
+        $filters = ($_GET)?$_GET:array();
+        $limit = (isset($_GET['per_page']))?$_GET['per_page']:5;
+$page = $this->input->get('page') ?? 1;
+$page = max(1, (int)$page); // Avoid page 0 or negative
+
+$offset = ($page - 1) * $limit;
+
+        $matches = $this->Profile_model->get_sql_matched_profiles($this->user_id,$limit,$offset,$filters);
+    $this->response([
+            'status' => true,
+            'data' => $matches
+        ], REST_Controller::HTTP_OK);
+}
+    public function user_matches_get($profile_id) {
+        $user_id = $this->Profile_model->get_user_id($profile_id);
+        $filters = ($_GET)?$_GET:array();
+        $limit = (isset($_GET['per_page']))?$_GET['per_page']:5;
+$page = $this->input->get('page') ?? 1;
+$page = max(1, (int)$page); // Avoid page 0 or negative
+
+$offset = ($page - 1) * $limit;
+
+        $matches = $this->Profile_model->get_sql_matched_profiles($user_id,$limit,$offset,$filters);
+    $this->response([
+            'status' => true,
+            'data' => $matches
+        ], REST_Controller::HTTP_OK);
+}
+    public function user_profile_get($id = 0) {
+    $this->response([
+            'status' => true,
+            'data' => $this->getProfile($id),
+        ], REST_Controller::HTTP_OK);
+}
+    public function index_get($id = 0) {
     $this->response([
             'status' => true,
             'data' => $this->profile
         ], REST_Controller::HTTP_OK);
 }
+    public function likes_get() {
+        $likes = $this->Profile_model->get_likes($this->user_id);
+        $n = array();
+        foreach ($likes as $key => $value) {
+            $n [] = $this->getProfile($this->Profile_model->get_user_id($value['profile_id']));
+        }
+    $this->response([
+            'status' => true,
+            'data' => $n
+        ], REST_Controller::HTTP_OK);
+}
 
     // Update family profile
+    public function ignore_profile_post() {
+        $user_id = $this->user_id;
+        $profile_id = 0;
+
+        if(isset($_POST))
+        {
+            $profile_id = $_POST['profile_id'];
+        }
+        if(!$profile_id)
+        {
+            $this->response(['status' => false, 'message' => 'Profile ID required.'], REST_Controller::HTTP_CONFLICT);
+        }
+        $r = $this->Profile_model->ignore_profile($user_id,$profile_id);
+        if($r)
+        {
+            $this->response([
+            'status' => true,
+            'message' => 'Action perform successfully.',
+        ], REST_Controller::HTTP_CREATED);
+
+        }
+        else
+        {
+            $this->response(['status' => false, 'message' => 'Server error try again'], REST_Controller::HTTP_BAD_REQUEST);
+        }
+    }
+    public function like_profile_post() {
+        $user_id = $this->user_id;
+        $profile_id = 0;
+
+        if(isset($_POST))
+        {
+            $profile_id = $_POST['profile_id'];
+        }
+        if(!$profile_id)
+        {
+            $this->response(['status' => false, 'message' => 'Profile ID required.'], REST_Controller::HTTP_CONFLICT);
+        }
+        $r = $this->Profile_model->like_profile($user_id,$profile_id);
+        if($r)
+        {
+            $this->response([
+            'status' => true,
+            'message' => 'Action perform successfully.',
+        ], REST_Controller::HTTP_CREATED);
+
+        }
+        else
+        {
+            $this->response(['status' => false, 'message' => 'Server error try again'], REST_Controller::HTTP_BAD_REQUEST);
+        }
+    }
     public function update_profile_post() {
 
     	$data = $_POST;

@@ -32,7 +32,7 @@ class Signup extends API_Controller {
         $existing = $this->db->get('users')->row();
         if ($existing) {
             $this->response(['status' => false, 'message' => 'Email already exists.'], REST_Controller::HTTP_CONFLICT);
-            return;
+            exit();
         }
 
         // Insert new user

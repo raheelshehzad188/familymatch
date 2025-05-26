@@ -184,4 +184,137 @@ if (!empty($insert_data)) {
             return true;
         }
     }
+    public function get_profile_id($user_id)
+    {
+        $tbl = 'profiles';
+        $d = array('user_id'=>$user_id);
+        $already = $this->db->where($d)->get($tbl)->row();
+        if($already)
+        {
+            return $already->id;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    public function get_user_id($user_id)
+    {
+        $tbl = 'profiles';
+        $d = array('id'=>$user_id);
+        $already = $this->db->where($d)->get($tbl)->row();
+        if($already)
+        {
+            return $already->user_id;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    public function ignore_profile($user_id,$profile_id)
+    {
+        $tbl = 'profile_ignore';
+        $d = array('user_id'=>$user_id,'profile_id'=>$profile_id);
+        $already = $this->db->where($d)->get($tbl)->row();
+        if($already)
+        {
+            return $this->db->where('id',$already->id)->delete($tbl);
+        }
+        else
+        {
+            return $this->db->insert($tbl,$d);
+        }
+    }
+    public function like_profile($user_id,$profile_id)
+    {
+        $tbl = 'profile_like';
+        $d = array('user_id'=>$user_id,'profile_id'=>$profile_id);
+        $already = $this->db->where($d)->get($tbl)->row();
+        if($already)
+        {
+            return $this->db->where('id',$already->id)->delete($tbl);
+        }
+        else
+        {
+            return $this->db->insert($tbl,$d);
+        }
+    }
+    public function get_likes($user_id)
+    {
+        $tbl = 'profile_like';
+        $d = array('user_id'=>$user_id);
+        return $already = $this->db->where($d)->get($tbl)->result_array();
+        
+    }
+    public function get_sql_matched_profiles($user_id, $limit = 10, $offset = 0, $filters = []) {
+    // Start base SQL
+    $sql = "
+        SELECT 
+            p.*,
+        m.thumb_path AS profile_image,
+
+
+
+            (
+                (CASE WHEN p.country_id = u.country_id THEN 20 ELSE 0 END) +
+                (CASE WHEN p.state_id = u.state_id THEN 15 ELSE 0 END) +
+                (CASE WHEN p.city_id = u.city_id THEN 10 ELSE 0 END) +
+                (CASE WHEN p.religion_id = u.religion_id THEN 20 ELSE 0 END) +
+                (CASE WHEN p.body_type = u.body_type THEN 10 ELSE 0 END) +
+                (CASE 
+                    WHEN ABS(TIMESTAMPDIFF(YEAR, p.dob, CURDATE()) - TIMESTAMPDIFF(YEAR, u.dob, CURDATE())) <= 3 
+                    THEN 20 ELSE 0 
+                END)
+            ) AS match_score
+        FROM profiles p
+        LEFT JOIN media m ON m.id = p.profile_pic
+        JOIN profiles u ON u.user_id = ?
+        WHERE p.user_id != ?
+    ";
+
+    $params = [$user_id, $user_id];
+
+    // Dynamic filters
+    if (!empty($filters['gender'])) {
+        $sql .= " AND p.gender = ? ";
+        $params[] = $filters['gender'];
+    }
+
+    if (!empty($filters['country_id'])) {
+        $sql .= " AND p.country_id = ? ";
+        $params[] = $filters['country_id'];
+    }
+
+    if (!empty($filters['state_id'])) {
+        $sql .= " AND p.state_id = ? ";
+        $params[] = $filters['state_id'];
+    }
+
+    if (!empty($filters['city_id'])) {
+        $sql .= " AND p.city_id = ? ";
+        $params[] = $filters['city_id'];
+    }
+
+    // You can add: only show verified/active profiles
+    // $sql .= " AND p.verified = 1 ";
+
+    // Sort by best matches
+    $sql .= " ORDER BY match_score DESC ";
+
+    // Pagination
+    $sql .= " LIMIT ? OFFSET ? ";
+    $params[] = (int)$limit;
+    $params[] = (int)$offset;
+
+    $query = $this->db->query($sql, $params);
+    $base_upload_url = base_url();
+
+foreach ($query->result() as $row) {
+    if($row->profile_image)
+    $row->profile_image = $base_upload_url . $row->profile_image;
+}
+    return $query->result();
+}
+
 }

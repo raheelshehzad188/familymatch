@@ -53,7 +53,7 @@
                                     <a class="nav-link <?= ( $controller == 'body_type' && isset($method) && $method == 'add')?'active':'' ?>" href="<?= $this->admin_url.'body_type/add'; ?>">Add Type</a>
                                 </nav>
                             </div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseinterest" aria-expanded="false" aria-controls="collapseinterest">
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapserefer" aria-expanded="false" aria-controls="collapserefer">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                                 Referral
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>

@@ -78,6 +78,7 @@ class API_Controller extends REST_Controller {
 
     }
     public function generate_token($user_id) {
+        $filter = ($_GET)?$_GET:array();
         // Example of creating a token. You can replace this with JWT logic.
         $payload = [
             'user_id' => $user_id,
@@ -95,7 +96,7 @@ class API_Controller extends REST_Controller {
     }
     if (!$auth_header || !preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
         echo json_encode(["status" => "error", "message" => "Unauthorized"]);
-        return;
+        exit();
     }
     $token = $matches[1];
     $token = base64_decode($token);
@@ -121,9 +122,86 @@ class API_Controller extends REST_Controller {
     }
 
     }
-    private function getProfile($user_id)
+    public function get_age_in_years($dob) {
+    $birthDate = new DateTime($dob);
+    $today = new DateTime();
+    $age = $today->diff($birthDate)->y; // 'y' means full years only
+    return $age;
+}
+
+    public function getsProfile($user_id)
     {
-        return $profile = $this->db->where('user_id',$user_id)->get('profiles')->row();
+        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion');
+        $this->db->from('profiles p');
+        $this->db->join('genders g', 'p.gender = g.id', 'left');
+        // $this->db->join('marital_statuses m', 'p.marital_status = m.id', 'left');
+        // $this->db->join('education_levels e', 'p.education_level = e.id', 'left');
+        $this->db->join('referrals r', 'p.reffer_id = r.id', 'left'); // optional
+        $this->db->join('body_types b', 'p.body_type = b.id', 'left'); // optional
+        $this->db->join('countries c', 'p.country_id = c.id', 'left'); // optional
+        $this->db->join('states s', 'p.state_id = s.id', 'left'); // optional
+        $this->db->join('cities ci', 'p.city_id = ci.id', 'left'); // optional
+        $this->db->join('religions rl', 'p.religion_id = rl.id', 'left'); // optional
+        $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // optional
+
+        $this->db->where('p.user_id', $user_id);
+        $query = $this->db->get();
+        $profile = $query->row();
+        $profile->age = $this->get_age_in_years($profile->dob);
+        $profile->img = base_url($profile->img);
+        $profile_id =         $profile->id;
+    }
+    public function getProfile($user_id)
+    {
+        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion');
+        $this->db->from('profiles p');
+        $this->db->join('genders g', 'p.gender = g.id', 'left');
+        // $this->db->join('marital_statuses m', 'p.marital_status = m.id', 'left');
+        // $this->db->join('education_levels e', 'p.education_level = e.id', 'left');
+        $this->db->join('referrals r', 'p.reffer_id = r.id', 'left'); // optional
+        $this->db->join('body_types b', 'p.body_type = b.id', 'left'); // optional
+        $this->db->join('countries c', 'p.country_id = c.id', 'left'); // optional
+        $this->db->join('states s', 'p.state_id = s.id', 'left'); // optional
+        $this->db->join('cities ci', 'p.city_id = ci.id', 'left'); // optional
+        $this->db->join('religions rl', 'p.religion_id = rl.id', 'left'); // optional
+        $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // optional
+
+        $this->db->where('p.user_id', $user_id);
+        $query = $this->db->get();
+        $profile = $query->row();
+        $profile->age = $this->get_age_in_years($profile->dob);
+        $profile->img = base_url($profile->img);
+        $profile_id =         $profile->id;
+        //get interests
+        $this->db->select('i.id,i.title,i.image');
+        $this->db->from('profile_intersts pi');
+        $this->db->join('interests i', 'pi.interest_id = i.id');
+        $this->db->where('pi.profile_id', $profile_id);
+
+         $query = $this->db->get();
+
+        $profile->interests = $query->result();
+        foreach ($profile->interests as $key => $value) {
+        $profile->interests[$key]->image = base_url('uploads/interests/'.$profile->interests[$key]->image);
+    }
+        //get ethnicities
+        $this->db->select('e.id,e.name');
+    $this->db->from('profile_ethnic pi');
+    $this->db->join('ethnicities e', 'pi.ethnic_id = e.id');  // Note: column name ethinc_id
+    $this->db->where('pi.profile_id', $profile_id);
+    $query = $this->db->get();
+    $profile->ethnicities =  $query->result();
+    //get values 
+    $this->db->select('e.id,e.name,e.img');
+    $this->db->from('profile_cvalues pi');
+    $this->db->join('core_values e', 'pi.val_id = e.id');  // Note: column name ethinc_id
+    $this->db->where('pi.profile_id', $profile_id);
+    $query = $this->db->get();
+    $profile->values = $query->result();
+    foreach ($profile->values as $key => $value) {
+        $profile->values[$key]->img = base_url($profile->values[$key]->img);
+    }
+        return $profile;
 
     }
 
