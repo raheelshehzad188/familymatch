@@ -169,9 +169,17 @@ class API_Controller extends REST_Controller {
         $this->db->where('p.user_id', $user_id);
         $query = $this->db->get();
         $profile = $query->row();
-        $profile->age = $this->get_age_in_years($profile->dob);
-        $profile->img = base_url($profile->img);
-        $profile_id =         $profile->id;
+        if(!$profile)
+        {
+            return (object)array();
+
+        }
+            $profile->age = '';
+            if($profile->dob)
+            $profile->age = $this->get_age_in_years($profile->dob);
+            $profile->img = base_url($profile->img);
+
+            $profile_id =         $profile->id;
         //get interests
         $this->db->select('i.id,i.title,i.image');
         $this->db->from('profile_intersts pi');

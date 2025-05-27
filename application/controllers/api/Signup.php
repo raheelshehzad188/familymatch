@@ -24,7 +24,7 @@ class Signup extends API_Controller {
 
         if ( !$email || !$password) {
             $this->response(['status' => false, 'message' => 'All fields are required.'], REST_Controller::HTTP_BAD_REQUEST);
-            return;
+            return '';
         }
 
         // Check if email already exists
@@ -32,7 +32,7 @@ class Signup extends API_Controller {
         $existing = $this->db->get('users')->row();
         if ($existing) {
             $this->response(['status' => false, 'message' => 'Email already exists.'], REST_Controller::HTTP_CONFLICT);
-            exit();
+            return '';
         }
 
         // Insert new user
@@ -43,7 +43,7 @@ class Signup extends API_Controller {
             return; 
         }
         // Insert data into the profiles table
-        $pid = $this->User_model->insert_profile($user_id, $full_name, $dob, $gender, $family_preference, $bio, $city, $country);
+        $pid = $this->User_model->insert_profile($user_id, $full_name, $dob, $gender, $bio);
         $token = $this->generate_token($user_id);
         $this->response([
             'status' => true,

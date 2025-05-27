@@ -21,16 +21,13 @@ class User_model extends CI_Model {
     }
 
     // Insert data into the profiles table
-    public function insert_profile($user_id, $full_name, $dob, $gender, $family_preference, $bio, $city, $country) {
+    public function insert_profile($user_id, $full_name, $dob, $gender ,$bio) {
         $data = array(
             'user_id' => $user_id,
             'full_name' => $full_name,
             'dob' => date("Y-m-d", strtotime($dob)),
             'gender' => $gender,
-            'family_preference' => $family_preference,
             'bio' => $bio,
-            'city' => $city,
-            'country' => $country
         );
         
         // Insert into profiles table
