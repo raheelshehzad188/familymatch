@@ -58,7 +58,7 @@
                                 Referral
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse <?= (isset($controller) && $controller == 'referral')?'show':'' ?>" id="collapseinterest" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse <?= (isset($controller) && $controller == 'referral')?'show':'' ?>" id="collapserefer" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
                                     <a class="nav-link <?= ( $controller == 'referral' && isset($method) && $method == 'index')?'active':'' ?>" href="<?= $this->admin_url.'referral'; ?>">All Referrals</a>
                                     <a class="nav-link <?= ( $controller == 'referral' && isset($method) && $method == 'add')?'active':'' ?>" href="<?= $this->admin_url.'referral/add'; ?>">Add Referral</a>

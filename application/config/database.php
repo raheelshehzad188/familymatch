@@ -72,8 +72,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $active_group = 'default';
 $query_builder = TRUE;
+$server_ip = $_SERVER['REMOTE_ADDR'] ?? '';
 
-$db['default'] = array(
+// Function to check if IP is local
+function is_local_ip($ip) {
+    return $ip === '127.0.0.1' || 
+           $ip === '::1' || 
+           strpos($ip, '192.168.') === 0;
+}
+
+if (is_local_ip($server_ip)) {
+    // Local database config
+    $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
 	'username' => 'root',
@@ -94,3 +104,29 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+} else {
+    // Live server database config
+    $db['default'] = array(
+	'dsn'	=> '',
+	'hostname' => 'localhost',
+	'username' => 'njamhxmy_family',
+	'password' => '7y}AD!Izx-Cg',
+	'database' => 'njamhxmy_family',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+}
+
+

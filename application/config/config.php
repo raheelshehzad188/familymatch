@@ -26,6 +26,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $root  = "http://".$_SERVER['HTTP_HOST'];
 $root .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
 $config['base_url']    = $root;
+$ip = $_SERVER['REMOTE_ADDR'] ?? '';
+$host = $_SERVER['HTTP_HOST'];
+if($ip === '127.0.0.1' || 
+           $ip === '::1' || 
+           strpos($ip, '192.168.') === 0)
+{
+	$config['base_url'] = 'http://'.$host.'/familymatch/';
+}
+else
+{
+	$config['base_url'] = 'familymatch.aakilarose.com/';
+}
 $config['admin_assets'] = $config['base_url'].'assets/admin/admin_001/';
 $config['user_assets']  = $config['base_url'].'assets/user/user_001/';
 /*
