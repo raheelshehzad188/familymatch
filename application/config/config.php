@@ -36,7 +36,7 @@ if($ip === '127.0.0.1' ||
 }
 else
 {
-	$config['base_url'] = 'familymatch.aakilarose.com/';
+	$config['base_url'] = 'https://familymatch.aakilarose.com/';
 }
 $config['admin_assets'] = $config['base_url'].'assets/admin/admin_001/';
 $config['user_assets']  = $config['base_url'].'assets/user/user_001/';

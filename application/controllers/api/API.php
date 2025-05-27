@@ -1,7 +1,7 @@
 <?php
 
 require APPPATH . 'core/API_Controller.php';
-class API extends API_Controller {
+class Api extends API_Controller {
 
     public function __construct() {
         parent::__construct();
@@ -10,7 +10,7 @@ class API extends API_Controller {
         $this->authenticate();
     }
     public function countries_get() {
-    	$co = $this->Gernal_model->get_countries();
+        $co = $this->Gernal_model->get_countries();
     $this->response([
             'status' => true,
             'data' => $co
@@ -142,11 +142,11 @@ public function body_types_get() {
 
     // Update family profile
     public function update_profile_post() {
-    	$data = $_POST;
-    	dd($data);
+        $data = $_POST;
+        dd($data);
     if (!$family_id) {
-    	        $result = $this->Profile_model->updateFamilyProfile($this->profile->id,$data);
-    	        dd($result);
+                $result = $this->Profile_model->updateFamilyProfile($this->profile->id,$data);
+                dd($result);
 
         echo json_encode(["status" => "error", "message" => "Invalid token"]);
         return;
