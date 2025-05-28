@@ -8,6 +8,18 @@ class Signup extends API_Controller {
         $this->load->model('user/User_model');
         $this->authenticate();
     }
+    function create_user_slug($name, $id) {
+    // Convert name to lowercase
+    $slug = strtolower($name);
+    
+    // Remove special characters and replace spaces with hyphens
+    $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
+    $slug = preg_replace('/[\s-]+/', '-', $slug);
+
+    // Append ID
+    return $slug . '-' . $id;
+}
+
 
     public function register_post() {
 
@@ -44,6 +56,8 @@ class Signup extends API_Controller {
         }
         // Insert data into the profiles table
         $pid = $this->User_model->insert_profile($user_id, $full_name, $dob, $gender, $bio);
+        $slug = $this->create_user_slug($full_name,$pid);
+        $this->db->where('id',$pid)->update('profiles',array('slug'=>$slug));
         $token = $this->generate_token($user_id);
         $this->response([
             'status' => true,
