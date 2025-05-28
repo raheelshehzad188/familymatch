@@ -64,6 +64,7 @@ $route['api/update-profile']['POST'] = 'api/Profile/update_profile';
 $route['api/ignore-profile']['POST'] = 'api/Profile/ignore_profile';
 $route['api/like-profile']['POST'] = 'api/Profile/like_profile';
 $route['api/user-profile/(:any)'] = 'api/Profile/user_profile/$1';
+$route['api/user-about/(:any)'] = 'api/Profile/user_about/$1';
 
 $route['api/likes']['GET'] = 'api/Profile/likes';
 $route['api/profile']['GET'] = 'api/Profile';

@@ -19,7 +19,7 @@ class User_model extends CI_Model {
     }
     public function get_user_profile($id)
     {
-        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion');
+        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion,ms.name as ms_namw');
         $this->db->from('profiles p');
         $this->db->join('genders g', 'p.gender = g.id', 'left');
         // $this->db->join('marital_statuses m', 'p.marital_status = m.id', 'left');
@@ -31,6 +31,7 @@ class User_model extends CI_Model {
         $this->db->join('cities ci', 'p.city_id = ci.id', 'left'); // optional
         $this->db->join('religions rl', 'p.religion_id = rl.id', 'left'); // optional
         $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // optional
+        $this->db->join('marital_status ms', 'p.marital_status = ms.id', 'left'); // optional
 
         $this->db->where('p.user_id', $id);
         $query = $this->db->get();

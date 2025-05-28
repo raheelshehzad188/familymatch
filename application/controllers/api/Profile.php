@@ -44,6 +44,49 @@ $offset = ($page - 1) * $limit;
             'data' => $this->getProfile($id),
         ], REST_Controller::HTTP_OK);
 }
+    public function user_about_get($id = 0) {
+        $p =(array) $this->getProfile($id);
+        $sur = $this->Profile_model->get_user_survey($id);
+        $s = array();
+        foreach($sur as $k=> $v)
+        {
+            $s[$v->question_id] = $v->option_text;
+        }
+        $sur= $s;
+        $admin_aassets = $this->config->item('admin_assets');
+        $about = array();
+
+        if(isset($p['marital_status_name']) && $p['marital_status_name'])
+        {
+            $about[] = array('img'=>$admin_aassets.'/img/aboutdivorce.png','val'=>$p['marital_status_name']);
+        }
+
+        if(isset($p['qualification']) && $p['qualification'])
+        {
+            $about[] = array('img'=>$admin_aassets.'/img/qualification.jpg','val'=>$p['qualification']);
+        }
+        if(isset($p['religion']) && $p['religion'])
+        {
+            $about[] = array('img'=>$admin_aassets.'/img/religion.png','val'=>$p['religion']);
+        }
+        if(isset($sur[16]) && $sur[16])
+        {
+            $about[] = array('img'=>$admin_aassets.'/img/kids.png','val'=>$sur[16]);
+        }
+        if(isset($sur[17]) && $sur[17])
+        {
+            $about[] = array('img'=>$admin_aassets.'/img/baby.png','val'=>$sur[17]);
+        }
+        
+        if(isset($p['height']) && $p['height'])
+        {
+            $about[] = array('img'=>$admin_aassets.'/img/height.png','val'=>$p['height']);
+        }
+    $this->response([
+            'status' => true,
+            'data' => $about,
+        ], REST_Controller::HTTP_OK);
+}
     public function index_get($id = 0) {
     $this->response([
             'status' => true,

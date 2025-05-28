@@ -143,6 +143,14 @@ if (!empty($insert_data)) {
         {
             $up['country'] = $data['country'];
         }
+        if(isset($data['marital_status']))
+        {
+            $up['marital_status'] = $data['marital_status'];
+        }
+        if(isset($data['qualification_id']))
+        {
+            $up['qualification_id'] = $data['qualification_id'];
+        }
 
         if(isset($data['body_type']))
         {
@@ -197,6 +205,27 @@ if (!empty($insert_data)) {
         {
             return 0;
         }
+    }
+    public function get_user_survey($user_id)
+    {
+        $this->db->where('u.id', $user_id);
+        $this->db->select('
+            u.id as user_id,
+            u.name as user_name,
+            q.id as question_id,
+            q.question,
+            o.id as option_id,
+            o.option_text,
+            r.created_at
+        ');
+        $this->db->from('responses r');
+        $this->db->join('users u', 'u.id = r.user_id');
+        $this->db->join('survey_questions q', 'q.id = r.question_id');
+        $this->db->join('survey_options o', 'o.id = r.option_id');
+        $this->db->order_by('r.user_id, q.id');
+        $query = $this->db->get();
+
+        return $query->result ();
     }
     public function get_user_id($user_id)
     {

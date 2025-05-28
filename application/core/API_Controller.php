@@ -131,7 +131,7 @@ class API_Controller extends REST_Controller {
 
     public function getsProfile($user_id)
     {
-        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion');
+        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion,ms.name as marital_status_name,ql.name as qualification');
         $this->db->from('profiles p');
         $this->db->join('genders g', 'p.gender = g.id', 'left');
         // $this->db->join('marital_statuses m', 'p.marital_status = m.id', 'left');
@@ -143,6 +143,8 @@ class API_Controller extends REST_Controller {
         $this->db->join('cities ci', 'p.city_id = ci.id', 'left'); // optional
         $this->db->join('religions rl', 'p.religion_id = rl.id', 'left'); // optional
         $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // optional
+        $this->db->join('marital_status ms', 'p.marital_status = ms.id', 'left'); // optional
+        $this->db->join('qualifications ql', 'p.qualification_id = ql.id', 'left'); // optional
 
         $this->db->where('p.user_id', $user_id);
         $query = $this->db->get();
@@ -153,7 +155,7 @@ class API_Controller extends REST_Controller {
     }
     public function getProfile($user_id)
     {
-        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion');
+        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion,ms.name as marital_status_name,ql.name as qualification');
         $this->db->from('profiles p');
         $this->db->join('genders g', 'p.gender = g.id', 'left');
         // $this->db->join('marital_statuses m', 'p.marital_status = m.id', 'left');
@@ -165,6 +167,8 @@ class API_Controller extends REST_Controller {
         $this->db->join('cities ci', 'p.city_id = ci.id', 'left'); // optional
         $this->db->join('religions rl', 'p.religion_id = rl.id', 'left'); // optional
         $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // optional
+        $this->db->join('marital_status ms', 'p.marital_status = ms.id', 'left'); // optional
+        $this->db->join('qualifications ql', 'p.qualification_id = ql.id', 'left'); // optional
 
         $this->db->where('p.user_id', $user_id);
         $query = $this->db->get();

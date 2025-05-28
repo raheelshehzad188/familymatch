@@ -36,6 +36,10 @@
         <div class="col-sm-9"><?= $user->gender ?></div>
       </div>
       <div class="row">
+        <div class="col-sm-3 info-label">Merital status:</div>
+        <div class="col-sm-9"><?= $user->ms_namw ?></div>
+      </div>
+      <div class="row">
         <div class="col-sm-3 info-label">Height:</div>
         <div class="col-sm-9"><?= $user->height ?></div>
       </div>

@@ -44,6 +44,7 @@ class Crud extends Admin_Controller {
         $row = $this->db->where('slug',$tbl)->get('crud')->row();
         $this->db->order_by('list_sort','ASC');
         $this->fields = $this->db->where('crud_id',$row->id)->get('crud_fields')->result_array();
+        
         $this->tbl = $row->db_tble;
         $this->Crud_model->tbl = $row->db_tble;
         $this->Crud_model->key = $row->tbl_key;
