@@ -23,6 +23,31 @@ class Api extends API_Controller {
             'data' => $co
         ], REST_Controller::HTTP_OK);
 }
+    public function search_get() {
+        $qualifications = $this->Gernal_model->get_all_data('qualifications');
+        $religions = $this->Gernal_model->get_all_data('religions');
+        $marital_status = $this->Gernal_model->get_all_data('marital_status');
+        $countries = $this->Gernal_model->get_countries();
+        foreach ($core_values as $key => $value) {
+
+             $core_values[$key]['image'] = base_url($core_values[$key]['img']);
+             unset($core_values[$key]['img']);
+        }
+        $eth = $this->Gernal_model->get_all_ethnicities();
+        $body = $this->Gernal_model->get_all_body_types();
+        $quest = $this->Gernal_model->get_all_questions_with_options();
+        $ref = $data;
+        $co = array();
+        $co['qualifications'] = $qualifications;
+        $co['religions'] = $religions;
+        $co['marital_status'] = $marital_status;
+        $co['countries'] = $countries;
+        $co['body'] = $body;
+    $this->response([
+            'status' => true,
+            'data' => $co
+        ], REST_Controller::HTTP_OK);
+}
     public function options_get() {
         $interests = $this->Gernal_model->get_all_interests();
         $i = array();
