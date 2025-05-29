@@ -23,8 +23,23 @@ class Api extends API_Controller {
             'data' => $co
         ], REST_Controller::HTTP_OK);
 }
+        public function results_get() {
+            $filters = ($_GET)?$_GET:array();
+            $limit = (isset($_GET['per_page']))?$_GET['per_page']:5;
+            $page = $this->input->get('page') ?? 1;
+            $page = max(1, (int)$page); // Avoid page 0 or negative
+
+            $offset = ($page - 1) * $limit;
+
+                    $matches = $this->Gernal_model->get_guest_profiles($limit,$offset,$filters);
+                $this->response([
+                        'status' => true,
+                        'data' => $matches
+                    ], REST_Controller::HTTP_OK);
+        }
     public function search_get() {
         $qualifications = $this->Gernal_model->get_all_data('qualifications');
+        $genders = $this->Gernal_model->get_all_data('genders');
         $religions = $this->Gernal_model->get_all_data('religions');
         $marital_status = $this->Gernal_model->get_all_data('marital_status');
         $countries = $this->Gernal_model->get_countries();
@@ -39,6 +54,7 @@ class Api extends API_Controller {
         $ref = $data;
         $co = array();
         $co['qualifications'] = $qualifications;
+        $co['genders'] = $genders;
         $co['religions'] = $religions;
         $co['marital_status'] = $marital_status;
         $co['countries'] = $countries;

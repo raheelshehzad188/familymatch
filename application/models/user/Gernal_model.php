@@ -20,6 +20,88 @@ class Gernal_model extends CI_Model {
     public function get_all_body_types() {
         return $this->db->get('body_types')->result_array();
     }
+public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
+    $sql = "
+        SELECT 
+            p.*,
+            g.name AS gender,
+            r.name AS reffer,
+            b.name AS body,
+            pp.thumb_path AS img,
+            c.name AS country,
+            s.name AS state,
+            ci.name AS city,
+            rl.name AS religion,
+            ms.name AS ms_name,
+            qf.name AS qualification,
+            m.thumb_path AS profile_image,
+            TIMESTAMPDIFF(YEAR, p.dob, CURDATE()) AS age
+        FROM profiles p
+        LEFT JOIN genders g ON p.gender = g.id
+        LEFT JOIN referrals r ON p.reffer_id = r.id
+        LEFT JOIN body_types b ON p.body_type = b.id
+        LEFT JOIN media pp ON p.profile_pic = pp.id
+        LEFT JOIN countries c ON p.country_id = c.id
+        LEFT JOIN states s ON p.state_id = s.id
+        LEFT JOIN cities ci ON p.city_id = ci.id
+        LEFT JOIN religions rl ON p.religion_id = rl.id
+        LEFT JOIN qualifications qf ON p.qualification_id = qf.id
+        LEFT JOIN marital_status ms ON p.marital_status = ms.id
+        LEFT JOIN media m ON m.id = p.profile_pic
+        WHERE 1=1
+    ";
+
+    $params = [];
+
+    if (!empty($filters['gender'])) {
+        $sql .= " AND p.gender = ? ";
+        $params[] = $filters['gender'];
+    }
+
+    if (!empty($filters['country_id'])) {
+        $sql .= " AND p.country_id = ? ";
+        $params[] = $filters['country_id'];
+    }
+
+    if (!empty($filters['state_id'])) {
+        $sql .= " AND p.state_id = ? ";
+        $params[] = $filters['state_id'];
+    }
+
+    if (!empty($filters['city_id'])) {
+        $sql .= " AND p.city_id = ? ";
+        $params[] = $filters['city_id'];
+    }
+
+    if (!empty($filters['min_age'])) {
+        $sql .= " AND TIMESTAMPDIFF(YEAR, p.dob, CURDATE()) >= ? ";
+        $params[] = (int)$filters['min_age'];
+    }
+
+    if (!empty($filters['max_age'])) {
+        $sql .= " AND TIMESTAMPDIFF(YEAR, p.dob, CURDATE()) <= ? ";
+        $params[] = (int)$filters['max_age'];
+    }
+
+    $sql .= " ORDER BY p.id DESC LIMIT ? OFFSET ? ";
+    $params[] = (int)$limit;
+    $params[] = (int)$offset;
+
+    $query = $this->db->query($sql, $params);
+
+    $base_upload_url = base_url();
+
+    foreach ($query->result() as $row) {
+        if ($row->profile_image) {
+            $row->profile_image = $base_upload_url . $row->profile_image;
+        }
+    }
+
+    return $query->result();
+}
+
+
+
     public function get_all_genders() {
         return $this->db->get('genders')->result_array();
     }

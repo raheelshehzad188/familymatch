@@ -220,7 +220,7 @@ class API_Controller extends REST_Controller {
     public function authenticate_key()
     {
         $api_key = $this->key;
-        $r =$this->db->where('key',$this->key)->where('host',$this->host)->get('keys')->row();
+        $r =$this->db->where('key',$this->key)->get('keys')->row();
 
         if (!$r) {
             $this->response(['status' => false, 'message' => 'Invalid API Key'], REST_Controller::HTTP_UNAUTHORIZED);
