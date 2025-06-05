@@ -103,6 +103,10 @@ if (!empty($insert_data)) {
         {
             $up['city_id'] = $data['city_id'];
         }
+        if(isset($data['blood_group']))
+        {
+            $up['blood_group'] = $data['blood_group'];
+        }
         if(isset($data['state_id']))
         {
             $up['state_id'] = $data['state_id'];

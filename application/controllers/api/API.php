@@ -42,6 +42,15 @@ class Api extends API_Controller {
         $genders = $this->Gernal_model->get_all_data('genders');
         $religions = $this->Gernal_model->get_all_data('religions');
         $marital_status = $this->Gernal_model->get_all_data('marital_status');
+        $blood_groups = $this->Gernal_model->get_all_data('blood_groups');
+        $interests = $this->Gernal_model->get_all_data('interests');
+        foreach ($interests as $key => $value) {
+            $interests[$key]['image'] = base_url($interests[$key]['image']);
+        }
+        $core_values = $this->Gernal_model->get_all_data('core_values');
+        foreach ($core_values as $key => $value) {
+            $core_values[$key]['image'] = base_url($core_values[$key]['image']);
+        }
         $countries = $this->Gernal_model->get_countries();
         foreach ($core_values as $key => $value) {
 
@@ -59,6 +68,9 @@ class Api extends API_Controller {
         $co['marital_status'] = $marital_status;
         $co['countries'] = $countries;
         $co['body'] = $body;
+        $co['interests'] = $interests;
+        $co['core_values'] = $core_values;
+        $co['blood_groups'] = $blood_groups;
     $this->response([
             'status' => true,
             'data' => $co
@@ -76,6 +88,7 @@ class Api extends API_Controller {
         $data = $this->Gernal_model->get_all_refferals();//
         $core_values = $this->Gernal_model->get_all_data('core_values');
         $religions = $this->Gernal_model->get_all_data('religions');
+        
         foreach ($core_values as $key => $value) {
 
              $core_values[$key]['image'] = base_url($core_values[$key]['img']);

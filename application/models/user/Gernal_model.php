@@ -57,6 +57,10 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
         $sql .= " AND p.gender = ? ";
         $params[] = $filters['gender'];
     }
+    if (!empty($filters['religion_id'])) {
+        $sql .= " AND p.religion_id = ? ";
+        $params[] = $filters['religion_id'];
+    }
 
     if (!empty($filters['country_id'])) {
         $sql .= " AND p.country_id = ? ";
@@ -66,6 +70,21 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
     if (!empty($filters['state_id'])) {
         $sql .= " AND p.state_id = ? ";
         $params[] = $filters['state_id'];
+    }
+
+    if (!empty($filters['marital_status'])) {
+        $sql .= " AND p.marital_status = ? ";
+        $params[] = $filters['marital_status'];
+    }
+
+    if (!empty($filters['body_type'])) {
+        $sql .= " AND p.body_type = ? ";
+        $params[] = $filters['body_type'];
+    }
+
+    if (!empty($filters['qualification_id'])) {
+        $sql .= " AND p.qualification_id = ? ";
+        $params[] = $filters['qualification_id'];
     }
 
     if (!empty($filters['city_id'])) {
@@ -88,6 +107,7 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
     $params[] = (int)$offset;
 
     $query = $this->db->query($sql, $params);
+    dd($this->db->last_query());
 
     $base_upload_url = base_url();
 
