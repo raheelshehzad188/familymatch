@@ -63,6 +63,7 @@ class Crud extends Admin_Controller {
             
             $data['js'] = $js;
             $data['dtable']  = 'admin/'.$this->route.'/get_json/'.$tbl;
+            $data['add_link']  = 'admin/'.$this->route.'/add/'.$tbl;
             $data['label']  = $this->label;
             $data['heading']  = $this->multi;
             $data['fields']  = $this->fields;
@@ -118,6 +119,96 @@ class Crud extends Admin_Controller {
             "data" => $data
         ]);
     }
+    public function add_column_if_not_exists($table_name, $column_name)
+{
+    $CI =& get_instance();
+    $CI->load->database();
+    $CI->load->dbforge();
+    $fields = $CI->db->list_fields($table_name);
+    if (!in_array($column_name, $fields)) {
+        
+        // Define new column structure
+        $new_field = [
+            $column_name => [
+                'type' => 'VARCHAR',
+                'constraint' => '255',
+                'null' => TRUE
+            ]
+        ];
+
+        // Add column
+        if ($CI->dbforge->add_column($table_name, $new_field)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    } else {
+        return false;
+    }
+}
+
+public function delete_table_if_exists($table_name)
+{
+    $CI =& get_instance();
+    $CI->load->dbforge();
+
+    // Check if table exists
+    if ($CI->db->table_exists($table_name)) {
+
+        // Drop the table
+        if ($CI->dbforge->drop_table($table_name)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    } else {
+        return false;
+    }
+}
+
+
+    public function create_table_if_not_exists($table_name, $primary_key)
+{
+    $CI =& get_instance();
+    $CI->load->dbforge();
+
+    // Check if table exists
+    if (!$CI->db->table_exists($table_name)) {
+
+        // Define fields
+        $fields = [
+            $primary_key => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => TRUE,
+                'auto_increment' => TRUE
+            ],
+            'created_at' => [
+                'type' => 'DATETIME',
+                'null' => TRUE
+            ]
+        ];
+
+        // Add fields to dbforge
+        $CI->dbforge->add_field($fields);
+
+        // Set primary key
+        $CI->dbforge->add_key($primary_key, TRUE);
+
+        // Create table
+        if ($CI->dbforge->create_table($table_name)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    } else {
+        return false;
+    }
+}
+
 
     public function add($tbl) {
         $this->set_data($tbl);
@@ -165,12 +256,39 @@ class Crud extends Admin_Controller {
                 $in[$col] = $this->input->post($col);
             }
         }
+        if($tbl == 'crud')
+        {
+            
+        $r = $this->create_table_if_not_exists($in['db_tble'], $in['tbl_key']);
+        if(!$r)
+        {
+        //     $_SESSION['error'] = 'Srver error on tbl creation';
+        // redirect('admin/crud/add/' . $this->tbl);
+        }
+        }
+        elseif($tbl == 'crud_fields')
+        {
+            $this->set_data('crud');
+            $row = $this->Crud_model->tbl = 'crud';
+            $row = $this->Crud_model->get_data_by_id($in['crud_id']);
+            $this->set_data($tbl);
+            if($row)
+            {
+        $r = $this->add_column_if_not_exists($row['db_tble'], $in['db_column']);
+        // if(!$r)
+        // {
+        //     $_SESSION['error'] = 'Srver error on column creation';
+        // redirect('admin/crud/add/' . $this->tbl);
+        // }
+            }
+            $this->set_data($tbl);
+        }
         $this->Crud_model->insert_data($in);
         $this->session->set_flashdata('success', $this->sing . ' added successfully.');
         redirect('admin/crud/all/' . $this->tbl);
     }
 }
-
+        // dd( $this->fields);
         $data['fields']  = $this->fields;
         $data['label']  = $this->label;
         $data['heading']  = $this->multi;
@@ -270,7 +388,14 @@ class Crud extends Admin_Controller {
     }
 
     public function delete($tbl, $id) {
+        
         $this->set_data($tbl);
+        if($tbl == 'crud')
+        {
+            $row = $this->Crud_model->get_data_by_id($id);
+            $r = $this->delete_table_if_exists($row['db_tble']);
+            
+        }
         $this->Crud_model->delete_data($id);
         $this->session->set_flashdata('success', $this->sing.' deleted successfully.');
         redirect('admin/'.$this->route.'/all/'.$tbl);

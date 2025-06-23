@@ -5,6 +5,16 @@
                             <li class="breadcrumb-item"><a href="<?= $this->admin_url; ?>">Dashboard</a></li>
                             <li class="breadcrumb-item active"><?= $heading ?></li>
                         </ol>
+
+
+
+ 
+                     <div class="col-md-12  text-end">
+                         <a href="<?= base_url($add_link); ?>" class="btn btn-primary">Add New</a>
+                     </div>
+
+
+
                         <div class="card mb-4">
                             <div class="card-header">
                                 <i class="fas fa-table me-1"></i>

@@ -107,7 +107,7 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
     $params[] = (int)$offset;
 
     $query = $this->db->query($sql, $params);
-    dd($this->db->last_query());
+    // dd($this->db->last_query());
 
     $base_upload_url = base_url();
 

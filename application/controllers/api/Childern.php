@@ -1,16 +1,62 @@
 <?php
-
+ 
 require APPPATH . 'core/API_Controller.php';
-class Profile extends API_Controller {
+class Childern extends API_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->load->model('user/Profile_model');
-        $this->load->helper('url');
         
+        $this->load->model('user/Childern_model');
+        $this->load->helper('url');
+        $this->validate_token();
+    }
+    public function del_child_get($id)
+    {
+        $in = $this->Childern_model->delete($id);
+        $this->validate_token();
+        if($in)
+        {
+            $this->response([
+            'status' => true,
+            'msg'=> 'Childern deleted successfully!',
+            'data' => $this->getProfile($this->user_id)
+        ], REST_Controller::HTTP_OK);
+
+        }
+
+    }
+    public function add_post()
+    {
+        $req = array('name'=>'Name','dob'=>'Date of Birth','relation'=>'Relation');
+        $data = array();
+        $data['user_id'] = $this->user_id;
+        foreach($req as $k=> $v)
+        {
+            if(!$_POST[$k])
+            {
+                $this->response(['status' => false, 'message' => $v.' field is required!.'], REST_Controller::HTTP_CONFLICT);
+            return '';
+            }
+            else
+            {
+                $data[$k] = $_POST[$k];
+            }
+        }
+        $data['dob'] = $newDate = date("Y-m-d", strtotime($data['dob']));
+        $data['occupation'] = (isset($_POST['occupation'])?$_POST['occupation']:'');
+        
+        $in = $this->Childern_model->insert($data);
+        if($in)
+        {
+            $this->response([
+            'status' => true,
+            'msg'=> 'Childern added successfully!',
+            'data' => $this->getProfile($this->user_id)
+        ], REST_Controller::HTTP_OK);
+
+        }
     }
     public function matches_get() {
-        $this->validate_token();
         $filters = ($_GET)?$_GET:array();
         $limit = (isset($_GET['per_page']))?$_GET['per_page']:5;
 $page = $this->input->get('page') ?? 1;
@@ -26,7 +72,6 @@ $offset = ($page - 1) * $limit;
 }
 
     public function user_matches_get($profile_id) {
-        $this->validate_token();
         $user_id = $this->Profile_model->get_user_id($profile_id);
         $filters = ($_GET)?$_GET:array();
         $limit = (isset($_GET['per_page']))?$_GET['per_page']:5;
@@ -90,29 +135,14 @@ $offset = ($page - 1) * $limit;
             'data' => $about,
         ], REST_Controller::HTTP_OK);
 }
-    public function index_get($id = 0) { 
-
-        $this->validate_token();
+    public function index_get($id = 0) {
     $this->response([
             'status' => true,
             'data' => $this->profile
         ], REST_Controller::HTTP_OK);
 }
     public function likes_get() {
-        $this->validate_token();
         $likes = $this->Profile_model->get_likes($this->user_id);
-        $n = array();
-        foreach ($likes as $key => $value) {
-            $n [] = $this->getProfile($this->Profile_model->get_user_id($value['profile_id']));
-        }
-    $this->response([
-            'status' => true,
-            'data' => $n
-        ], REST_Controller::HTTP_OK);
-}
-    public function winks_get() {
-        $this->validate_token();
-        $likes = $this->Profile_model->get_winks($this->user_id);
         $n = array();
         foreach ($likes as $key => $value) {
             $n [] = $this->getProfile($this->Profile_model->get_user_id($value['profile_id']));
@@ -125,7 +155,6 @@ $offset = ($page - 1) * $limit;
 
     // Update family profile
     public function ignore_profile_post() {
-        $this->validate_token();
         $user_id = $this->user_id;
         $profile_id = 0;
 
@@ -152,7 +181,6 @@ $offset = ($page - 1) * $limit;
         }
     }
     public function like_profile_post() {
-        $this->validate_token();
         $user_id = $this->user_id;
         $profile_id = 0;
 
@@ -165,33 +193,6 @@ $offset = ($page - 1) * $limit;
             $this->response(['status' => false, 'message' => 'Profile ID required.'], REST_Controller::HTTP_CONFLICT);
         }
         $r = $this->Profile_model->like_profile($user_id,$profile_id);
-        if($r)
-        {
-            $this->response([
-            'status' => true,
-            'message' => 'Action perform successfully.',
-        ], REST_Controller::HTTP_CREATED);
-
-        }
-        else
-        {
-            $this->response(['status' => false, 'message' => 'Server error try again'], REST_Controller::HTTP_BAD_REQUEST);
-        }
-    }
-    public function wink_profile_post() {
-        $this->validate_token();
-        $user_id = $this->user_id;
-        $profile_id = 0;
-
-        if(isset($_POST))
-        {
-            $profile_id = $_POST['profile_id'];
-        }
-        if(!$profile_id)
-        {
-            $this->response(['status' => false, 'message' => 'Profile ID required.'], REST_Controller::HTTP_CONFLICT);
-        }
-        $r = $this->Profile_model->wink_profile($user_id,$profile_id);
         if($r)
         {
             $this->response([

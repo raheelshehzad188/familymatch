@@ -23,6 +23,24 @@ class Api extends API_Controller {
             'data' => $co
         ], REST_Controller::HTTP_OK);
 }
+
+    public function profile_options_get() {
+        $all = $this->Gernal_model->get_all_data('profile_fields');
+            $A = ARRAY();
+        foreach($all as $k=> $v)
+        {
+            $all[$k]['options'] = $this->Gernal_model->get_all_data($v['tbl']); 
+            if(!isset($a[$v['akey']]))
+            {
+                $a[$v['akey']] = array();
+            }
+            $a[$v['akey']][] = $all[$k];
+        }
+    $this->response([
+            'status' => true,
+            'data' => $a
+        ], REST_Controller::HTTP_OK);
+}
         public function results_get() {
             $filters = ($_GET)?$_GET:array();
             $limit = (isset($_GET['per_page']))?$_GET['per_page']:5;
@@ -44,6 +62,7 @@ class Api extends API_Controller {
         $marital_status = $this->Gernal_model->get_all_data('marital_status');
         $blood_groups = $this->Gernal_model->get_all_data('blood_groups');
         $interests = $this->Gernal_model->get_all_data('interests');
+        $ethnicities = $this->Gernal_model->get_all_data('ethnicities');
         foreach ($interests as $key => $value) {
             $interests[$key]['image'] = base_url($interests[$key]['image']);
         }
@@ -69,8 +88,15 @@ class Api extends API_Controller {
         $co['countries'] = $countries;
         $co['body'] = $body;
         $co['interests'] = $interests;
+        $co['ethnicities'] = $ethnicities;
         $co['core_values'] = $core_values;
         $co['blood_groups'] = $blood_groups;
+        $smoking_options = $this->Gernal_model->get_all_data('smoking_options');
+        $travel_frequency_options = $this->Gernal_model->get_all_data('travel_frequency');
+        $co['music'] = $this->Gernal_model->get_all_data('music_types');
+        $co['allergy'] = $this->Gernal_model->get_all_data('allergies');
+        $co['medical_conditions'] = $this->Gernal_model->get_all_data('medical_conditions');
+
     $this->response([
             'status' => true,
             'data' => $co
@@ -197,10 +223,8 @@ public function body_types_get() {
     // Update family profile
     public function update_profile_post() {
         $data = $_POST;
-        dd($data);
     if (!$family_id) {
                 $result = $this->Profile_model->updateFamilyProfile($this->profile->id,$data);
-                dd($result);
 
         echo json_encode(["status" => "error", "message" => "Invalid token"]);
         return;

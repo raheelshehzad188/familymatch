@@ -94,19 +94,25 @@ class API_Controller extends REST_Controller {
     {
         $auth_header = $headers['authorization'];
     }
+    
     if (!$auth_header || !preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
+        
+        
         echo json_encode(["status" => "error", "message" => "Unauthorized"]);
         exit();
     }
+    
     $token = $matches[1];
     $token = base64_decode($token);
     $arr = json_decode($token,true);
     if($auth_header && $arr && isset($arr['user_id']))
     {
-        $this->user_id = $arr['user_id'];
+        $this->user_id = $arr['user_id']; 
+        
         $this->profile = $this->getProfile($this->user_id);
         if(!$this->profile || !$this->user_id)
         {
+           
             $this->response(['status' => false, 'message' => 'Unauthorized'], REST_Controller::HTTP_UNAUTHORIZED);
             return false;
         }
@@ -118,7 +124,7 @@ class API_Controller extends REST_Controller {
     else
     {
         $this->response(['status' => false, 'message' => 'Unauthorized'], REST_Controller::HTTP_UNAUTHORIZED);
-            return false;
+            exit();
     }
 
     }
@@ -150,8 +156,13 @@ class API_Controller extends REST_Controller {
         $query = $this->db->get();
         $profile = $query->row();
         $profile->age = $this->get_age_in_years($profile->dob);
+        $profile->childerns = $this->getChilderns($user_id);
         $profile->img = base_url($profile->img);
         $profile_id =         $profile->id;
+    }
+    public function getChilderns($user_id)
+    {
+        return $this->db->where('user_id',$user_id)->get('user_to_childern')->result_array();
     }
     public function getProfile($user_id)
     {
@@ -181,6 +192,7 @@ class API_Controller extends REST_Controller {
             $profile->age = '';
             if($profile->dob)
             $profile->age = $this->get_age_in_years($profile->dob);
+            $profile->childerns = $this->getChilderns($user_id);
             $profile->img = base_url($profile->img);
 
             $profile_id =         $profile->id;

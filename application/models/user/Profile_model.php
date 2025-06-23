@@ -280,6 +280,29 @@ if (!empty($insert_data)) {
         return $already = $this->db->where($d)->get($tbl)->result_array();
         
     }
+    public function wink_profile($user_id,$profile_id)
+    {
+        $tbl = 'profile_wink';
+        $d = array('user_id'=>$user_id,'profile_id'=>$profile_id);
+        $already = $this->db->where($d)->get($tbl)->row();
+        if($already)
+        {
+            $d['create_at'] = date('Y-m-d H:i:s');
+            return $this->db->where('id',$already->id)->update($tbl,$d);
+            // return $this->db->where('id',$already->id)->delete($tbl);
+        }
+        else
+        {
+            return $this->db->insert($tbl,$d);
+        }
+    }
+    public function get_winks($user_id)
+    {
+        $tbl = 'profile_wink';
+        $d = array('user_id'=>$user_id);
+        return $already = $this->db->where($d)->get($tbl)->result_array();
+        
+    }
     public function get_sql_matched_profiles($user_id, $limit = 10, $offset = 0, $filters = []) {
     // Start base SQL
     $sql = "
