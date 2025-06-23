@@ -3,6 +3,27 @@ require APPPATH . 'core/API_Controller.php';
 
 class MediaController extends API_Controller
 {
+    public function myimgs()
+    {
+        $imgs = $this->db->where('user_id',$this->user_id)->get('media')->result_array();
+        $i = array();
+        foreach($imgs as $k=> $v)
+        {
+            $i[] = base_url($v['original_path']);
+        }
+        return $i;
+        
+    }
+    public function gallary_get()
+    {
+        $this->validate_token();
+        $i = $this->myimgs();
+        $this->response([
+            'status' => true,
+            'data' => $i
+        ], REST_Controller::HTTP_OK);
+        
+    }
     public function upload_post()
 	{
 
@@ -73,7 +94,8 @@ class MediaController extends API_Controller
 	    }
 	    $this->response([
             'status' => true,
-            'media_id' => $media_id
+            'media_id' => $media_id,
+            'gallary' => $this->myimgs()
         ], REST_Controller::HTTP_OK);
 	}
 	private function resize_image($source_path, $target_path, $width, $height)

@@ -5,8 +5,10 @@ require_once(APPPATH.'core/Admin_Controller.php');
 class Login extends Admin_Controller {
 
     public function __construct() {
+
         parent::__construct();
-        if(isset($_SESSION['admin']))
+        $m = $this->router->fetch_method();
+        if(isset($_SESSION['admin']) && $m != 'logout')
             {
         redirect('admin/dashboard');
             }
@@ -17,6 +19,7 @@ class Login extends Admin_Controller {
 
     }
     public function logout() {
+
     // Unset admin session data
     unset($_SESSION['admin']);
     unset($_SESSION['error']);
