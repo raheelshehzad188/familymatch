@@ -7,7 +7,7 @@ $assets_url = $assets_url.'/login/';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Login Template</title>
+  <title><?php echo $title ?></title>
   <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.materialdesignicons.com/4.8.95/css/materialdesignicons.min.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
@@ -17,9 +17,12 @@ $assets_url = $assets_url.'/login/';
   <main>
     <div class="container-fluid">
       <div class="row">
+        <div class="col-sm-6 px-0 d-none d-sm-block">
+          <img src="<?= $assets_url ?>images/login.jpg" alt="login image" class="login-img">
+        </div>
         <div class="col-sm-6 login-section-wrapper">
           <div class="brand-wrapper">
-            <img src="<?= $assets_url ?>images/logo.svg" alt="logo" class="logo">
+            <?php echo $title ?>
           </div>
           <div class="login-wrapper my-auto">
             <h1 class="login-title">Log in</h1>
@@ -38,9 +41,7 @@ $assets_url = $assets_url.'/login/';
             <p class="login-wrapper-footer-text">Don't have an account? <a href="#!" class="text-reset">Register here</a></p>
           </div>
         </div>
-        <div class="col-sm-6 px-0 d-none d-sm-block">
-          <img src="<?= $assets_url ?>images/login.jpg" alt="login image" class="login-img">
-        </div>
+        
       </div>
     </div>
   </main>

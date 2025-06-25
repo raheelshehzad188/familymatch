@@ -51,7 +51,7 @@
                                                 if($v['is_list'])
                                                 {
                                                     ?>
-                                                    <th><?= $value['label'] ?></th>
+                                                    <th><?= $v['label'] ?></th>
 
                                                     <?php
 

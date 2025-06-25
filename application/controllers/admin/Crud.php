@@ -46,6 +46,7 @@ class Crud extends Admin_Controller {
         $this->fields = $this->db->where('crud_id',$row->id)->get('crud_fields')->result_array();
         
         $this->tbl = $row->db_tble;
+        $this->slug = $row->slug;
         $this->Crud_model->tbl = $row->db_tble;
         $this->Crud_model->key = $row->tbl_key;
         $this->label = $row->single;
@@ -60,10 +61,9 @@ class Crud extends Admin_Controller {
 
         $js = array();
             $js[] = 'https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap.min.js';
-            
             $data['js'] = $js;
-            $data['dtable']  = 'admin/'.$this->route.'/get_json/'.$tbl;
-            $data['add_link']  = 'admin/'.$this->route.'/add/'.$tbl;
+            $data['dtable']  = 'admin/'.$this->route.'/get_json/'.$this->slug;
+            $data['add_link']  = 'admin/'.$this->route.'/add/'.$this->slug;
             $data['label']  = $this->label;
             $data['heading']  = $this->multi;
             $data['fields']  = $this->fields;
@@ -359,7 +359,7 @@ public function delete_table_if_exists($table_name)
     if ($this->form_validation->run() == FALSE) {
         // Validation failed - reload form with errors
         $_SESSION['error'] = 'Fill required field';
-        redirect('admin/crud/edit/' . $this->tbl.'/'.$id);
+        redirect('admin/crud/edit/' . $this->slug.'/'.$id);
         
     } else {
         //make array to insert
@@ -378,7 +378,7 @@ public function delete_table_if_exists($table_name)
         }
         $r = $this->Crud_model->update_data($id,$in);
         $this->session->set_flashdata('success', $this->sing . ' added successfully.');
-        redirect('admin/crud/all/' . $this->tbl);
+        redirect('admin/crud/all/' . $this->slug);
     }
 }
         $data['label']  = $this->label;

@@ -3,21 +3,25 @@ require APPPATH . 'core/API_Controller.php';
 
 class MediaController extends API_Controller
 {
-    public function myimgs()
+    
+    public function del_img_get($id)
     {
-        $imgs = $this->db->where('user_id',$this->user_id)->get('media')->result_array();
-        $i = array();
-        foreach($imgs as $k=> $v)
+        $this->validate_token();
+        $uid = $this->user_id;
+        $r = $this->db->where('user_id',$uid)->where('id',$id)->delete('media');
+        if($r)
         {
-            $i[] = base_url($v['original_path']);
+         $this->response([
+            'status' => true,
+            'msg' =>'Image deleted successfully!',
+            'gallery' => $this->myimgs($this->user_id)
+        ], REST_Controller::HTTP_OK);   
         }
-        return $i;
-        
     }
     public function gallary_get()
     {
         $this->validate_token();
-        $i = $this->myimgs();
+        $i = $this->myimgs($this->user_id);
         $this->response([
             'status' => true,
             'data' => $i
@@ -95,7 +99,7 @@ class MediaController extends API_Controller
 	    $this->response([
             'status' => true,
             'media_id' => $media_id,
-            'gallary' => $this->myimgs()
+            'gallery' => $this->myimgs($this->user_id)
         ], REST_Controller::HTTP_OK);
 	}
 	private function resize_image($source_path, $target_path, $width, $height)

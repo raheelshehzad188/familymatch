@@ -60,6 +60,7 @@ $route['api/login']['POST'] = 'api/login/login';
 $route['api/email']['POST'] = 'api/api/email';
 $route['api/upload']['POST'] = 'api/mediaController/upload';
 $route['api/gallary']['GET'] = 'api/mediaController/gallary';
+$route['api/delete-img/(:any)']['GET'] = 'api/mediaController/del_img/$1';
 $route['api/submit_survey']['POST'] = 'api/Profile/submit_survey';
 $route['api/update-profile']['POST'] = 'api/Profile/update_profile';
 $route['api/ignore-profile']['POST'] = 'api/Profile/ignore_profile';

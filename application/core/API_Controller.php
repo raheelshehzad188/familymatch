@@ -15,6 +15,17 @@ class API_Controller extends REST_Controller {
 
 
     }
+    public function myimgs($uid)
+    {
+        $imgs = $this->db->where('user_id',$uid)->get('media')->result_array();
+        $i = array();
+        foreach($imgs as $k=> $v)
+        {
+            $i[] = array('img'=>base_url($v['original_path']),'id'=>$v['id']);
+        }
+        return $i;
+        
+    }
     private $key = '';
     private $host = '';
     protected $user_id = '';
@@ -184,6 +195,7 @@ class API_Controller extends REST_Controller {
         $this->db->where('p.user_id', $user_id);
         $query = $this->db->get();
         $profile = $query->row();
+        
         if(!$profile)
         {
             return (object)array();
@@ -194,6 +206,8 @@ class API_Controller extends REST_Controller {
             $profile->age = $this->get_age_in_years($profile->dob);
             $profile->childerns = $this->getChilderns($user_id);
             $profile->img = base_url($profile->img);
+            $profile->gallery = $this->myimgs($user_id);
+        
 
             $profile_id =         $profile->id;
         //get interests
