@@ -231,4 +231,22 @@ public function body_types_get() {
     }
 }
 
+public function admins_get() {
+    $this->load->model('admin/Admin_model');
+    $admins = $this->Admin_model->get_all();
+    $result = array();
+    foreach ($admins as $admin) {
+        $result[] = array(
+            'name' => $admin->name,
+            'email' => $admin->email
+        );
+    }
+    $this->response([
+        'status' => true,
+        'data' => $result
+    ], REST_Controller::HTTP_OK);
+}
+
+
+
 }
