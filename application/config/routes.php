@@ -76,6 +76,7 @@ $route['api/winks']['GET'] = 'api/Profile/winks';
 $route['api/profile']['GET'] = 'api/Profile';
 $route['api/matches']['GET'] = 'api/Profile/matches';
 $route['api/results']['GET'] = 'api/api/results';
+$route['api/results-login']['GET'] = 'api/Profile/results_login';
 $route['api/user-matches/(:any)']['GET'] = 'api/Profile/user_matches/$1';
 $route['api/countries']['GET'] = 'api/api/countries';
 $route['api/states']['GET'] = 'api/api/states'; 

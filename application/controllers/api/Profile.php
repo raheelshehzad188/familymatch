@@ -47,6 +47,24 @@ $offset = ($page - 1) * $limit;
             'data' => $this->getProfile($id),
         ], REST_Controller::HTTP_OK);
 }
+public function results_login_get() {
+    $this->validate_token();
+    
+    $this->load->model('user/Gernal_model');
+    $filters = ($_GET)?$_GET:array();
+    $filters['user_id'] = $this->user_id;
+    $limit = (isset($_GET['per_page']))?$_GET['per_page']:5;
+    $page = $this->input->get('page') ?? 1;
+    $page = max(1, (int)$page); // Avoid page 0 or negative
+
+    $offset = ($page - 1) * $limit;
+    $matches = $this->Gernal_model->get_guest_profiles($limit,$offset,$filters);
+    dd($matches);
+    $this->response([
+        'status' => true,
+        'data' => $matches
+    ], REST_Controller::HTTP_OK);
+}
     public function user_about_get($id = 0) {
         $p =(array) $this->getProfile($id);
         $sur = $this->Profile_model->get_user_survey($id);

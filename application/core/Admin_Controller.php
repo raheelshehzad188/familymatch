@@ -44,6 +44,12 @@ class Admin_Controller extends CI_Controller {
     {
         return$this->db->get('crud')->result_array();
     }
+    public function get_side_bar()
+    {
+        $role_id = ($this->admin->role_id)?$this->admin->role_id:0;
+        $role = $this->db->where('id',$role_id)->get('roles')->row();
+        return (isset($role->slug))?'sidebar_'.$role->slug.'.php':'sidebar.php';
+    }
     public function admin($view,$data = array())
     {
         if(!isset($data['assets_url']))
@@ -60,6 +66,7 @@ class Admin_Controller extends CI_Controller {
         }
         $data['admin'] = $this->admin;
         $data['cruds'] = $this->get_crud();
+        $data['side_bar'] = $this->get_side_bar();
         $data['controller'] = $this->router->fetch_class();
         $data['method'] = $this->router->fetch_method();
         $data['param1'] = $this->para1;

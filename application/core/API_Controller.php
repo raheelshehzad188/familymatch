@@ -15,6 +15,11 @@ class API_Controller extends REST_Controller {
 
 
     }
+    public function is_like($uid,$pid)
+    {
+        $r = $this->db->where('user_id',$uid)->where('profile_id',$pid)->get('profile_like')->row();
+        return ($r)?1:0;
+    }
     public function myimgs($uid)
     {
         $imgs = $this->db->where('user_id',$uid)->get('media')->result_array();
@@ -242,6 +247,28 @@ class API_Controller extends REST_Controller {
         return $profile;
 
     }
+    public function getShortProfile($user_id)
+{
+    $this->db->select('p.id,p.user_id, p.full_name, pp.thumb_path as profile_pic, c.name as country, ci.name as city');
+    $this->db->from('profiles p');
+    $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // profile pic
+    $this->db->join('countries c', 'p.country_id = c.id', 'left'); // country name
+    $this->db->join('cities ci', 'p.city_id = ci.id', 'left'); // city name
+    $this->db->where('p.user_id', $user_id);
+    
+    $query = $this->db->get();
+    $profile = $query->row();
+
+    if (!$profile) {
+        return (object)[];
+    }
+
+    // Construct full image URL
+    $profile->profile_pic = base_url($profile->profile_pic);
+
+    return $profile;
+}
+
 
     public function authenticate_key()
     {

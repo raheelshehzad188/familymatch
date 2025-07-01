@@ -34,6 +34,7 @@ class Crud extends Admin_Controller {
     public $sing = 'Body Type';
     public $multi = 'Body Types';
     public $label ='Type';
+    public $form_type ='full';
     public $tbl = '';
     public $fields = [];
     public function set_data($tbl)
@@ -52,6 +53,7 @@ class Crud extends Admin_Controller {
         $this->label = $row->single;
         $this->sing = $row->single;
         $this->multi = $row->multi;
+        $this->form_type = $row->form_type;
 
     }
 
@@ -77,7 +79,7 @@ class Crud extends Admin_Controller {
         $data = array();
 
         foreach ($users as $k=>$user) {
-            $action = '<a href="'.$this->admin_url.$this->route.'/edit/'.$tbl.'/'.$user[$this->Crud_model->key].'" class="btn">Edit</a>|<a href="'.$this->admin_url.$this->route.'/delete/'.$tbl.'/'.$user[$this->Crud_model->key].'" class="btn">Delete</a>';
+            $action = '<a class="edit-btn   btn" href="'.$this->admin_url.$this->route.'/edit/'.$tbl.'/'.$user[$this->Crud_model->key].'" ><i class="fa-solid fa-pen-to-square"></i> Edit</a><a class="del-btn btn btn-danger" href="'.$this->admin_url.$this->route.'/delete/'.$tbl.'/'.$user[$this->Crud_model->key].'" ><i class="fa-solid fa-trash"></i> Delete</a>';
                 $sing = array();
                 $sing[] = $user[$this->Crud_model->key];
                 
@@ -292,6 +294,7 @@ public function delete_table_if_exists($table_name)
         $data['fields']  = $this->fields;
         $data['label']  = $this->label;
         $data['heading']  = $this->multi;
+        $data['form_type']  = $this->form_type;
         $this->admin($this->dir.'/add',$data);
     }
     private function _upload_image($file) {

@@ -21,6 +21,12 @@ class Gernal_model extends CI_Model {
         return $this->db->get('body_types')->result_array();
     }
 public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
+    $params = [];
+
+    // Insert user_id as first param for the subquery
+    $user_id = !empty($filters['user_id']) ? (int)$filters['user_id'] : 0;
+    $params[] = $user_id;
+
     $sql = "
         SELECT 
             p.*,
@@ -35,7 +41,13 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
             ms.name AS ms_name,
             qf.name AS qualification,
             m.thumb_path AS profile_image,
-            TIMESTAMPDIFF(YEAR, p.dob, CURDATE()) AS age
+            TIMESTAMPDIFF(YEAR, p.dob, CURDATE()) AS age,
+            (
+                SELECT 1
+                FROM profile_like pl
+                WHERE pl.user_id = ? AND pl.profile_id = p.id
+                LIMIT 1
+            ) AS is_like
         FROM profiles p
         LEFT JOIN genders g ON p.gender = g.id
         LEFT JOIN referrals r ON p.reffer_id = r.id
@@ -51,8 +63,7 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
         WHERE 1=1
     ";
 
-    $params = [];
-
+    // Filters (appended after user_id)
     if (!empty($filters['gender'])) {
         $sql .= " AND p.gender = ? ";
         $params[] = $filters['gender'];
@@ -61,53 +72,46 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
         $sql .= " AND p.religion_id = ? ";
         $params[] = $filters['religion_id'];
     }
-
     if (!empty($filters['country_id'])) {
         $sql .= " AND p.country_id = ? ";
         $params[] = $filters['country_id'];
     }
-
     if (!empty($filters['state_id'])) {
         $sql .= " AND p.state_id = ? ";
         $params[] = $filters['state_id'];
     }
-
     if (!empty($filters['marital_status'])) {
         $sql .= " AND p.marital_status = ? ";
         $params[] = $filters['marital_status'];
     }
-
     if (!empty($filters['body_type'])) {
         $sql .= " AND p.body_type = ? ";
         $params[] = $filters['body_type'];
     }
-
     if (!empty($filters['qualification_id'])) {
         $sql .= " AND p.qualification_id = ? ";
         $params[] = $filters['qualification_id'];
     }
-
     if (!empty($filters['city_id'])) {
         $sql .= " AND p.city_id = ? ";
         $params[] = $filters['city_id'];
     }
-
     if (!empty($filters['min_age'])) {
         $sql .= " AND TIMESTAMPDIFF(YEAR, p.dob, CURDATE()) >= ? ";
         $params[] = (int)$filters['min_age'];
     }
-
     if (!empty($filters['max_age'])) {
         $sql .= " AND TIMESTAMPDIFF(YEAR, p.dob, CURDATE()) <= ? ";
         $params[] = (int)$filters['max_age'];
     }
 
+    // Pagination
     $sql .= " ORDER BY p.id DESC LIMIT ? OFFSET ? ";
     $params[] = (int)$limit;
     $params[] = (int)$offset;
 
+    // Run query
     $query = $this->db->query($sql, $params);
-    // dd($this->db->last_query());
 
     $base_upload_url = base_url();
 
@@ -115,10 +119,12 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
         if ($row->profile_image) {
             $row->profile_image = $base_upload_url . $row->profile_image;
         }
+        $row->is_liked = $row->is_liked ? 1 : 0;
     }
 
     return $query->result();
 }
+
 
 
 

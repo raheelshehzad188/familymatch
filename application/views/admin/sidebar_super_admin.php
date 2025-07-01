@@ -8,14 +8,18 @@
                             </a>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#user_attribute" aria-expanded="false" aria-controls="user_attribute">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                User Attributes
+                                User Attributes 
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse " id="user_attribute" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <?php
+                            $arr = array('religions','blood_groups','marital_status');
+
+                            ?>
+                            <div class="collapse <?= (isset($controller) && $controller == 'crud' && isset($param1) && in_array($param1,$arr))?'show':'' ?>" id="user_attribute" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link " href="#">Religion</a> 
-                                    <a class="nav-link " href="#">Blood group</a>
-                                    <a class="nav-link " href="#">Marital status</a>
+                                    <a class="nav-link <?= ($param1 == 'religions')?'active':'' ?>" href="<?= base_url('admin/crud/all/religions'); ?>">Religion</a>
+                                    <a class="nav-link <?= ($param1 == 'blood_groups')?'active':'' ?>" href="<?= base_url('admin/crud/all/blood_groups') ?>">Blood group</a>
+                                    <a class="nav-link <?= ($param1 == 'marital_status')?'active':'' ?>" href="<?= base_url('admin/crud/all/marital_status') ?>">Marital status</a>
                                 </nav>
                             </div>
                       
