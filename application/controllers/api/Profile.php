@@ -59,7 +59,6 @@ public function results_login_get() {
 
     $offset = ($page - 1) * $limit;
     $matches = $this->Gernal_model->get_guest_profiles($limit,$offset,$filters);
-    dd($matches);
     $this->response([
         'status' => true,
         'data' => $matches
@@ -187,6 +186,7 @@ public function results_login_get() {
         {
             $this->response([
             'status' => true,
+            'is_like' => $this->is_like($user_id,$profile_id),
             'message' => 'Action perform successfully.',
         ], REST_Controller::HTTP_CREATED);
 
@@ -225,7 +225,7 @@ public function results_login_get() {
     }
     public function update_profile_post() {
 
-    	$data = $_POST;
+        $data = $_POST;
         $json = file_get_contents('php://input');
 
         if(!$_POST && $json)
@@ -233,7 +233,7 @@ public function results_login_get() {
             $data = json_decode($json,true);
         }
     if ($this->profile->id) {
-    	        $result = $this->Profile_model->updateFamilyProfile($this->profile->id,$data);
+                $result = $this->Profile_model->updateFamilyProfile($this->profile->id,$data);
 
                 if($result)
                 {
