@@ -120,7 +120,7 @@ public function results_login_get() {
         $likes = $this->Profile_model->get_likes($this->user_id);
         $n = array();
         foreach ($likes as $key => $value) {
-            $n [] = $this->getProfile($this->Profile_model->get_user_id($value['profile_id']));
+            $n [] = $this->getShortProfile($this->Profile_model->get_user_id($value['profile_id']));
         }
     $this->response([
             'status' => true,
