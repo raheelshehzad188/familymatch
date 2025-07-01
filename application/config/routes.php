@@ -88,6 +88,7 @@ $route['api/profile_options']['GET'] = 'api/api/profile_options';
 $route['api/options']['GET'] = 'api/api/options';
 $route['api/search']['GET'] = 'api/api/search';
 $route['image/(:any)/(.+)'] = 'image/resize/$1/$2';
+$route['api/admins']['GET'] = 'api/api/admins';
 
 
 
