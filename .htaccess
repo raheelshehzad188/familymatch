@@ -1,14 +1,12 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # !IMPORTANT! Set your RewriteBase here and don't forget trailing and leading
-  #  slashes.
-  # If your page resides at
-  #  http://www.example.com/mypage/test1
-  # then use
-  # RewriteBase /mypage/test1/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php?/$1 [L]
+  RewriteBase /familymatch/
+  # Allow direct access to existing files and directories
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  # Otherwise, forward to index.php
+  RewriteRule ^(.*)$ index.php?/$1 [L]
 </IfModule>
 
 <IfModule !mod_rewrite.c>
@@ -20,4 +18,6 @@
 
 <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin: "*"
+    Header set Access-Control-Allow-Methods: "GET, POST, OPTIONS, PUT, DELETE"
+    Header set Access-Control-Allow-Headers: "Content-Type, Authorization, X-Requested-With, X-API-KEY, Accept, Referer"
 </IfModule>
