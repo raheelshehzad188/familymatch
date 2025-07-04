@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GoodRx Fair Price Widget Test</title>
+</head>
+<body>
+    <h2>GoodRx Fair Price Widget Example</h2>
+    <div id="goodrx_fair-price_widget"> </div>
+    <script>
+        var _grxdn = "lipitor";
+        (function(d,t){
+            var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+            g.src="//s3.amazonaws.com/assets.goodrx.com/static/widgets/fair.min.js";
+            s.parentNode.insertBefore(g,s)
+        }(document,"script"));
+    </script>
+</body>
+</html> 

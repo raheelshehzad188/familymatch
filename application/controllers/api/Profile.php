@@ -387,19 +387,26 @@ class Profile extends API_Controller
         $this->load->model('user/User_model');
         $this->User_model->set_reset_token($email, $token);
 
-        $reset_link = base_url("reset-password?token=$token");
+        // Load email template and replace placeholder
+        $template = file_get_contents(APPPATH . 'views/email_reset_password.php');
+        $reset_link = "https://familymatch.aakilarose.com/reset?token=$token";
+        $email_body = str_replace('{{RESET_LINK}}', $reset_link, $template);
 
         $this->load->library('email');
-        // No need to initialize config, it will use application/config/email.php
-        $this->email->from('your_email@gmail.com', 'Your App Name'); // <-- change this
+        $this->email->from('familymatch@aakilarose.com', 'FamilyMatch');
         $this->email->to($email);
         $this->email->subject('Password Reset Request');
-        $this->email->message("Click the link to reset your password: $reset_link");
+        $this->email->message($email_body);
 
         if ($this->email->send()) {
             $this->response(['status' => true, 'message' => 'Password reset link sent to your email.'], REST_Controller::HTTP_OK);
         } else {
-            $this->response(['status' => false, 'message' => 'Failed to send email.'], REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+            $error = $this->email->print_debugger(['headers']);
+            $this->response([
+                'status' => false,
+                'message' => 'Failed to send email.',
+                'error' => $error
+            ], REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -420,7 +427,19 @@ class Profile extends API_Controller
         $this->load->model('user/User_model');
         $user = $this->User_model->get_user_by_token($token);
         if (!$user) {
-            $this->response(['status' => false, 'message' => 'Invalid or expired token.'], REST_Controller::HTTP_UNAUTHORIZED);
+            // Debug info: check if token exists in DB and what expiry is
+            $db_user = $this->db->where('reset_token', $token)->get('users')->row();
+            $debug = [
+                'provided_token' => $token,
+                'now' => date('Y-m-d H:i:s'),
+                'db_token' => $db_user ? $db_user->reset_token : null,
+                'db_expiry' => $db_user ? $db_user->reset_token_expiry : null
+            ];
+            $this->response([
+                'status' => false,
+                'message' => 'Invalid or expired token.',
+                'debug' => $debug
+            ], REST_Controller::HTTP_UNAUTHORIZED);
             return;
         }
         $hashed = password_hash($new_password, PASSWORD_DEFAULT);
@@ -428,6 +447,31 @@ class Profile extends API_Controller
         $this->User_model->clear_reset_token($user->id);
 
         $this->response(['status' => true, 'message' => 'Password reset successfully.'], REST_Controller::HTTP_OK);
+    }
+
+    public function test_email_post()
+    {
+        $email = $this->post('email');
+        if (!$email) {
+            $this->response(['status' => false, 'message' => 'Email is required.'], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
+        $this->load->library('email');
+        $this->email->from('familymatch@aakilarose.com', 'FamilyMatch');
+        $this->email->to($email);
+        $this->email->subject('Test Email');
+        $this->email->message('This is a test email from FamilyMatch SMTP endpoint.');
+
+        if ($this->email->send()) {
+            $this->response(['status' => true, 'message' => 'Test email sent successfully.'], REST_Controller::HTTP_OK);
+        } else {
+            $error = $this->email->print_debugger(['headers']);
+            $this->response([
+                'status' => false,
+                'message' => 'Failed to send test email.',
+                'error' => $error
+            ], REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
