@@ -1,5 +1,6 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------------
@@ -53,7 +54,7 @@ $route['default_controller'] = 'welcome';
 $route['signup'] = 'user/signup';
 $route['admin'] = 'admin/dashboard';
 $route['404_override'] = '';
-$route['translate_uri_dashes'] = FALSE;
+$route['translate_uri_dashes'] = false;
 //APIs routes
 $route['api/signup']['POST'] = 'api/signup/register';
 $route['api/login']['POST'] = 'api/login/login';
@@ -64,10 +65,11 @@ $route['api/delete-img/(:any)']['GET'] = 'api/mediaController/del_img/$1';
 $route['api/submit_survey']['POST'] = 'api/Profile/submit_survey';
 $route['api/update-profile']['POST'] = 'api/Profile/update_profile';
 $route['api/ignore-profile']['POST'] = 'api/Profile/ignore_profile';
+$route['api/ignores']['GET'] = 'api/Profile/ignores';
 $route['api/like-profile']['POST'] = 'api/Profile/like_profile';
 $route['api/wink-profile']['POST'] = 'api/Profile/wink_profile';
 $route['api/childern/add']['POST'] = 'api/Childern/add';
-$route['api/delete-childern/(:any)']['GET'] = 'api/Childern/del_child/$1'; 
+$route['api/delete-childern/(:any)']['GET'] = 'api/Childern/del_child/$1';
 $route['api/user-profile/(:any)'] = 'api/Profile/user_profile/$1';
 $route['api/user-about/(:any)'] = 'api/Profile/user_about/$1';
 
@@ -79,7 +81,7 @@ $route['api/results']['GET'] = 'api/api/results';
 $route['api/results-login']['GET'] = 'api/Profile/results_login';
 $route['api/user-matches/(:any)']['GET'] = 'api/Profile/user_matches/$1';
 $route['api/countries']['GET'] = 'api/api/countries';
-$route['api/states']['GET'] = 'api/api/states'; 
+$route['api/states']['GET'] = 'api/api/states';
 $route['api/cities']['GET'] = 'api/api/cities';
 $route['api/questions']['GET'] = 'api/api/questions';
 $route['api/refferals']['GET'] = 'api/api/refferals';
@@ -90,6 +92,8 @@ $route['api/options']['GET'] = 'api/api/options';
 $route['api/search']['GET'] = 'api/api/search';
 $route['image/(:any)/(.+)'] = 'image/resize/$1/$2';
 $route['api/admins']['GET'] = 'api/api/admins';
-
-
-
+$route['api/favorite-profile']['POST'] = 'api/Profile/favorite_profile';
+$route['api/favorites']['GET'] = 'api/Profile/favorites';
+$route['api/profile/change_password']['post'] = 'api/profile/change_password';
+$route['api/profile/forgot_password']['post'] = 'api/profile/forgot_password';
+$route['api/profile/reset_password']['post'] = 'api/profile/reset_password';
