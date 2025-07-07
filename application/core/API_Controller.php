@@ -33,6 +33,14 @@ class API_Controller extends REST_Controller
         $r = $this->db->where('user_id', $uid)->where('profile_id', $pid)->get('profile_wink')->row();
         return ($r) ? 1 : 0;
     }
+    
+    public function has_winked_at_me($winker_user_id, $current_user_id)
+    {
+        // Check if winker_user_id has winked at current_user_id's profile
+        $current_profile_id = $this->db->where('user_id', $current_user_id)->get('profiles')->row()->id;
+        $r = $this->db->where('user_id', $winker_user_id)->where('profile_id', $current_profile_id)->get('profile_wink')->row();
+        return ($r) ? 1 : 0;
+    }
     public function is_favorite($uid, $pid)
     {
         $r = $this->db->where('user_id', $uid)->where('profile_id', $pid)->get('profile_favorite')->row();

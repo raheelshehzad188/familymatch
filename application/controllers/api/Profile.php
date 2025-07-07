@@ -131,9 +131,23 @@ class Profile extends API_Controller
     public function winks_get()
     {
         $this->validate_token();
-        $likes = $this->Profile_model->get_winks($this->user_id);
+        $winks = $this->Profile_model->get_winks($this->user_id);
         $n = [];
-        foreach ($likes as $key => $value) {
+        foreach ($winks as $key => $value) {
+            $n [] = $this->getShortProfile($value['winker_user_id']);
+        }
+        $this->response([
+                'status' => true,
+                'data' => $n
+            ], REST_Controller::HTTP_OK);
+    }
+
+    public function winks_sent_get()
+    {
+        $this->validate_token();
+        $winks = $this->Profile_model->get_winks_sent($this->user_id);
+        $n = [];
+        foreach ($winks as $key => $value) {
             $n [] = $this->getShortProfile($this->Profile_model->get_user_id($value['profile_id']));
         }
         $this->response([

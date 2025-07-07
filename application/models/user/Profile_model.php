@@ -267,10 +267,22 @@ class Profile_model extends CI_Model
     }
     public function get_winks($user_id)
     {
+        // Get winks received by the user (profiles that winked at this user)
+        $sql = "
+        SELECT pw.*, p.user_id as winker_user_id
+        FROM profile_wink pw
+        JOIN profiles p ON p.id = pw.profile_id
+        WHERE p.user_id = ?
+        ";
+        return $this->db->query($sql, [$user_id])->result_array();
+    }
+
+    public function get_winks_sent($user_id)
+    {
+        // Get winks sent by the user (profiles this user has winked at)
         $tbl = 'profile_wink';
         $d = ['user_id' => $user_id];
-        return $already = $this->db->where($d)->get($tbl)->result_array();
-
+        return $this->db->where($d)->get($tbl)->result_array();
     }
     public function get_sql_matched_profiles($user_id, $limit = 10, $offset = 0, $filters = [])
     {
