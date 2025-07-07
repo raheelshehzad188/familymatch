@@ -6,7 +6,7 @@
   }
 
   .container {
-    max-width: 450px;
+    max-width: 100%;
     margin: 50px auto;
     padding: 20px;
     background: #fff;
@@ -48,6 +48,10 @@
   tr:nth-child(even) {
     background-color: #f2f2f2;
   }
+  form{
+        width: 41%;
+    margin-left: 326px;
+  }
 </style>
 
 <div class="container">
@@ -65,6 +69,7 @@
   </form>
 
   <h4>Saved API Keys</h4>
+  
   <table class="table table-bordered">
     <thead>
       <tr>
@@ -90,11 +95,13 @@
             </td>
           </tr>
       <?php endforeach; ?>
+      
       <?php else : ?>
+        <!-- "No Data" row with styled message and icon -->
         <tr>
-          <td colspan="4" class="text-center" style="padding: 30px; background-color: #eef1f5; border-radius: 8px;">
-            <div style="font-size: 20px; color: #555; display: flex; align-items: center; justify-content: center; gap: 10px;">
-              <!-- Icon: info circle -->
+          <td colspan="4" style="background-color:#eef1f5; border-radius:8px; padding:30px;">
+            <div style="display:flex; align-items:center; justify-content:center; gap:10px; font-size:20px; color:#555;">
+              <!-- Info icon SVG -->
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#888" viewBox="0 0 24 24">
                 <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm0 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-7h2v-2h-2v2zm2-4h-2V7h2v4z"/>
               </svg>

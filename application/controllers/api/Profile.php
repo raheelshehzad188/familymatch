@@ -223,7 +223,7 @@ class Profile extends API_Controller
             $this->response([
             'status' => true,
             'is_wink' => $this->is_wink($user_id, $profile_id),
-            'message' => 'Action perform successfully.',
+            'message' => "You winked at this user! 😉 You can send unlimited winks.",
         ], REST_Controller::HTTP_CREATED);
 
         } else {
