@@ -1,10 +1,18 @@
 <?php
-require APPPATH . 'libraries/REST_Controller.php';
-class API_Controller extends REST_Controller {
 
-    public function __construct() 
+require APPPATH . 'libraries/REST_Controller.php';
+class API_Controller extends REST_Controller
+{
+    public function __construct()
     {
         parent::__construct();
+        // CORS headers
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
+        if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+            exit(0);
+        }
         // Add your custom logic here
         // For example: load a common model, helper, etc.
         $this->load->helper('url');
@@ -15,68 +23,81 @@ class API_Controller extends REST_Controller {
 
 
     }
-    public function is_like($uid,$pid)
+    public function is_like($uid, $pid)
     {
-        $r = $this->db->where('user_id',$uid)->where('profile_id',$pid)->get('profile_like')->row();
-        return ($r)?1:0;
+        $r = $this->db->where('user_id', $uid)->where('profile_id', $pid)->get('profile_like')->row();
+        return ($r) ? 1 : 0;
+    }
+    public function is_wink($uid, $pid)
+    {
+        $r = $this->db->where('user_id', $uid)->where('profile_id', $pid)->get('profile_wink')->row();
+        return ($r) ? 1 : 0;
+    }
+    public function is_favorite($uid, $pid)
+    {
+        $r = $this->db->where('user_id', $uid)->where('profile_id', $pid)->get('profile_favorite')->row();
+        return ($r) ? 1 : 0;
+    }
+    public function is_ignored($uid, $pid)
+    {
+        $r = $this->db->where('user_id', $uid)->where('profile_id', $pid)->get('profile_ignore')->row();
+        return ($r) ? 1 : 0;
     }
     public function myimgs($uid)
     {
-        $imgs = $this->db->where('user_id',$uid)->get('media')->result_array();
-        $i = array();
-        foreach($imgs as $k=> $v)
-        {
-            $i[] = array('img'=>base_url($v['original_path']),'id'=>$v['id']);
+        $imgs = $this->db->where('user_id', $uid)->get('media')->result_array();
+        $i = [];
+        foreach ($imgs as $k => $v) {
+            $i[] = ['img' => base_url($v['original_path']),'id' => $v['id']];
         }
         return $i;
-        
+
     }
     private $key = '';
     private $host = '';
     protected $user_id = '';
     protected $profile = '';
     public function example_api()
-{
+    {
 
-    $user_id = $this->session->userdata('user_id') ?? null;
-    $request_url = current_url();
-    $request_method = $this->input->method(TRUE);
-    $headers = json_encode($this->input->request_headers());
-     $client_ip = $this->input->ip_address(); // ✅ IP Address capture
+        $user_id = $this->session->userdata('user_id') ?? null;
+        $request_url = current_url();
+        $request_method = $this->input->method(true);
+        $headers = json_encode($this->input->request_headers());
+        $client_ip = $this->input->ip_address(); // ✅ IP Address capture
 
 
 
-    // Request data handle karna GET ya POST dono ke liye
-    if ($request_method === 'GET') {
-        $request_data = json_encode($this->input->get());
-    } else {
-        $request_data = json_encode($this->input->post());
-        $json = file_get_contents('php://input');
+        // Request data handle karna GET ya POST dono ke liye
+        if ($request_method === 'GET') {
+            $request_data = json_encode($this->input->get());
+        } else {
+            $request_data = json_encode($this->input->post());
+            $json = file_get_contents('php://input');
 
-        if(!$this->input->post() && $json)
-        {
-            $request_data = $json;
+            if (!$this->input->post() && $json) {
+                $request_data = $json;
+            }
         }
+
+
+        $response = ['status' => 'success', 'message' => 'API called successfully'];
+
+        $this->output
+            ->set_content_type('application/json')
+            ->set_output(json_encode($response));
+
+        $log_data = [
+            'user_id' => $user_id,
+            'request_url' => $request_url,
+            'client_ip' => $client_ip,
+            'request_method' => $request_method,
+            'request_data' => $request_data,
+            'request_headers' => $headers,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        $r = $this->insert_log($log_data);
     }
-
-
-    $response = ['status' => 'success', 'message' => 'API called successfully'];
-
-    $this->output
-        ->set_content_type('application/json')
-        ->set_output(json_encode($response));
-
-    $log_data = [
-        'user_id' => $user_id,
-        'request_url' => $request_url,
-        'client_ip' => $client_ip,
-        'request_method' => $request_method,
-        'request_data' => $request_data,
-        'request_headers' => $headers,
-        'created_at' => date('Y-m-d H:i:s')
-    ];
-    $r = $this->insert_log($log_data);
-}
     public function insert_log($data)
     {
         $this->db->insert('api_logs', $data);
@@ -93,8 +114,9 @@ class API_Controller extends REST_Controller {
         $this->authenticate_key();
 
     }
-    public function generate_token($user_id) {
-        $filter = ($_GET)?$_GET:array();
+    public function generate_token($user_id)
+    {
+        $filter = ($_GET) ? $_GET : [];
         // Example of creating a token. You can replace this with JWT logic.
         $payload = [
             'user_id' => $user_id,
@@ -105,51 +127,47 @@ class API_Controller extends REST_Controller {
     public function validate_token()
     {
         $headers = apache_request_headers();
-    $auth_header = isset($headers['Authorization']) ? $headers['Authorization'] : null;
-    if(!$auth_header && isset($headers['authorization']))
-    {
-        $auth_header = $headers['authorization'];
-    }
-    
-    if (!$auth_header || !preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
-        
-        
-        echo json_encode(["status" => "error", "message" => "Unauthorized"]);
-        exit();
-    }
-    
-    $token = $matches[1];
-    $token = base64_decode($token);
-    $arr = json_decode($token,true);
-    if($auth_header && $arr && isset($arr['user_id']))
-    {
-        $this->user_id = $arr['user_id']; 
-        
-        $this->profile = $this->getProfile($this->user_id);
-        if(!$this->profile || !$this->user_id)
-        {
-           
-            $this->response(['status' => false, 'message' => 'Unauthorized'], REST_Controller::HTTP_UNAUTHORIZED);
-            return false;
+        $auth_header = isset($headers['Authorization']) ? $headers['Authorization'] : null;
+        if (!$auth_header && isset($headers['authorization'])) {
+            $auth_header = $headers['authorization'];
         }
-        return $this->user_id;
+
+        if (!$auth_header || !preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
 
 
-
-    }
-    else
-    {
-        $this->response(['status' => false, 'message' => 'Unauthorized'], REST_Controller::HTTP_UNAUTHORIZED);
+            echo json_encode(["status" => "error", "message" => "Unauthorized"]);
             exit();
-    }
+        }
+
+        $token = $matches[1];
+        $token = base64_decode($token);
+        $arr = json_decode($token, true);
+        if ($auth_header && $arr && isset($arr['user_id'])) {
+            $this->user_id = $arr['user_id'];
+
+            $this->profile = $this->getProfile($this->user_id);
+            if (!$this->profile || !$this->user_id) {
+
+                $this->response(['status' => false, 'message' => 'Unauthorized'], REST_Controller::HTTP_UNAUTHORIZED);
+                return false;
+            }
+            return $this->user_id;
+
+
+
+        } else {
+            $this->response(['status' => false, 'message' => 'Unauthorized'], REST_Controller::HTTP_UNAUTHORIZED);
+            exit();
+        }
 
     }
-    public function get_age_in_years($dob) {
-    $birthDate = new DateTime($dob);
-    $today = new DateTime();
-    $age = $today->diff($birthDate)->y; // 'y' means full years only
-    return $age;
-}
+    public function get_age_in_years($dob)
+    {
+        $birthDate = new DateTime($dob);
+        $today = new DateTime();
+        $age = $today->diff($birthDate)->y; // 'y' means full years only
+        return $age;
+    }
 
     public function getsProfile($user_id)
     {
@@ -178,7 +196,7 @@ class API_Controller extends REST_Controller {
     }
     public function getChilderns($user_id)
     {
-        return $this->db->where('user_id',$user_id)->get('user_to_childern')->result_array();
+        return $this->db->where('user_id', $user_id)->get('user_to_childern')->result_array();
     }
     public function getProfile($user_id)
     {
@@ -200,80 +218,80 @@ class API_Controller extends REST_Controller {
         $this->db->where('p.user_id', $user_id);
         $query = $this->db->get();
         $profile = $query->row();
-        
-        if(!$profile)
-        {
-            return (object)array();
+
+        if (!$profile) {
+            return (object)[];
 
         }
-            $profile->age = '';
-            if($profile->dob)
+        $profile->age = '';
+        if ($profile->dob) {
             $profile->age = $this->get_age_in_years($profile->dob);
-            $profile->childerns = $this->getChilderns($user_id);
-            $profile->img = base_url($profile->img);
-            $profile->gallery = $this->myimgs($user_id);
-        
+        }
+        $profile->childerns = $this->getChilderns($user_id);
+        $profile->img = base_url($profile->img);
+        $profile->gallery = $this->myimgs($user_id);
 
-            $profile_id =         $profile->id;
+
+        $profile_id =         $profile->id;
         //get interests
         $this->db->select('i.id,i.title,i.image');
         $this->db->from('profile_intersts pi');
         $this->db->join('interests i', 'pi.interest_id = i.id');
         $this->db->where('pi.profile_id', $profile_id);
 
-         $query = $this->db->get();
+        $query = $this->db->get();
 
         $profile->interests = $query->result();
         foreach ($profile->interests as $key => $value) {
-        $profile->interests[$key]->image = base_url('uploads/interests/'.$profile->interests[$key]->image);
-    }
+            $profile->interests[$key]->image = base_url('uploads/interests/'.$profile->interests[$key]->image);
+        }
         //get ethnicities
         $this->db->select('e.id,e.name');
-    $this->db->from('profile_ethnic pi');
-    $this->db->join('ethnicities e', 'pi.ethnic_id = e.id');  // Note: column name ethinc_id
-    $this->db->where('pi.profile_id', $profile_id);
-    $query = $this->db->get();
-    $profile->ethnicities =  $query->result();
-    //get values 
-    $this->db->select('e.id,e.name,e.img');
-    $this->db->from('profile_cvalues pi');
-    $this->db->join('core_values e', 'pi.val_id = e.id');  // Note: column name ethinc_id
-    $this->db->where('pi.profile_id', $profile_id);
-    $query = $this->db->get();
-    $profile->values = $query->result();
-    foreach ($profile->values as $key => $value) {
-        $profile->values[$key]->img = base_url($profile->values[$key]->img);
-    }
+        $this->db->from('profile_ethnic pi');
+        $this->db->join('ethnicities e', 'pi.ethnic_id = e.id');  // Note: column name ethinc_id
+        $this->db->where('pi.profile_id', $profile_id);
+        $query = $this->db->get();
+        $profile->ethnicities =  $query->result();
+        //get values
+        $this->db->select('e.id,e.name,e.img');
+        $this->db->from('profile_cvalues pi');
+        $this->db->join('core_values e', 'pi.val_id = e.id');  // Note: column name ethinc_id
+        $this->db->where('pi.profile_id', $profile_id);
+        $query = $this->db->get();
+        $profile->values = $query->result();
+        foreach ($profile->values as $key => $value) {
+            $profile->values[$key]->img = base_url($profile->values[$key]->img);
+        }
         return $profile;
 
     }
     public function getShortProfile($user_id)
-{
-    $this->db->select('p.id,p.user_id, p.full_name, pp.thumb_path as profile_pic, c.name as country, ci.name as city');
-    $this->db->from('profiles p');
-    $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // profile pic
-    $this->db->join('countries c', 'p.country_id = c.id', 'left'); // country name
-    $this->db->join('cities ci', 'p.city_id = ci.id', 'left'); // city name
-    $this->db->where('p.user_id', $user_id);
-    
-    $query = $this->db->get();
-    $profile = $query->row();
+    {
+        $this->db->select('p.id,p.user_id, p.full_name, pp.thumb_path as profile_pic, c.name as country, ci.name as city');
+        $this->db->from('profiles p');
+        $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // profile pic
+        $this->db->join('countries c', 'p.country_id = c.id', 'left'); // country name
+        $this->db->join('cities ci', 'p.city_id = ci.id', 'left'); // city name
+        $this->db->where('p.user_id', $user_id);
 
-    if (!$profile) {
-        return (object)[];
+        $query = $this->db->get();
+        $profile = $query->row();
+
+        if (!$profile) {
+            return (object)[];
+        }
+
+        // Construct full image URL
+        $profile->profile_pic = base_url($profile->profile_pic);
+
+        return $profile;
     }
-
-    // Construct full image URL
-    $profile->profile_pic = base_url($profile->profile_pic);
-
-    return $profile;
-}
 
 
     public function authenticate_key()
     {
         $api_key = $this->key;
-        $r =$this->db->where('key',$this->key)->get('keys')->row();
+        $r = $this->db->where('key', $this->key)->get('keys')->row();
 
         if (!$r) {
             $this->response(['status' => false, 'message' => 'Invalid API Key'], REST_Controller::HTTP_UNAUTHORIZED);

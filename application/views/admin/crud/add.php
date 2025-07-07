@@ -45,27 +45,25 @@
         <?php
         foreach ($fields as $key => $value) {
             $file = dirname(__FILE__).'/fields/'.$value['type'].'.php';
-            if($form_type == "half")
-            {
-            ?>
+            if ($form_type == "half") {
+                ?>
               <div class="col-md-6">
               <?php
             }
 
-            if(file_exists($file)) {
+            if (file_exists($file)) {
                 include $file;
             } else {
                 $file = 'fields/default.php';
                 include $file;
             }
-            if($form_type == "half")
-            {
-            ?>
+            if ($form_type == "half") {
+                ?>
               </div>
             <?php
             }
         }
-        ?>
+  ?>
         <button type="submit" class="btn btn-success mt-2">Submit</button>
     </form>
   </div>

@@ -1,15 +1,18 @@
 <?php
-require APPPATH . 'core/API_Controller.php';
-class Login extends API_Controller {
 
-    public function __construct() {
+require APPPATH . 'core/API_Controller.php';
+class Login extends API_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
 
         $this->load->model('user/User_model');
     }
 
-    public function login_post() {
-    	$this->authenticate();
+    public function login_post()
+    {
+        $this->authenticate();
 
         // Input validation
         $email = $this->post('email');

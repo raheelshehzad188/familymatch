@@ -3,9 +3,8 @@
         #tab-content { border: 1px solid #ccc; padding: 15px; margin-top: 10px; }
     </style>
 <?php
-if(isset($user->img))
-{
-	?>
+if (isset($user->img)) {
+    ?>
 	<img src="<?= base_url($user->img) ?>" height="40" width="40"/>
 	<?php
 }

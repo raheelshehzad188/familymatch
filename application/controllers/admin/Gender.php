@@ -1,47 +1,51 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 require_once(APPPATH.'core/Admin_Controller.php');
 
-class Gender extends Admin_Controller {
-
-    public function __construct() {
+class Gender extends Admin_Controller
+{
+    public function __construct()
+    {
 
         parent::__construct();
         $this->load->model('admin/Gender_model');
-        
+
         $this->dir = 'admin/'.$this->route;
     }
     public $die = '';
     public $route = 'gender';
     public $sing = 'Gender';
     public $multi = 'Gender';
-    public $label ='Title';
+    public $label = 'Title';
 
-    public function index() {
+    public function index()
+    {
 
 
-        $js = array();
-            $js[] = 'https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap.min.js';
-            
-            $data['js'] = $js;
-            $data['dtable']  = 'admin/'.$this->route.'/get_json';
-            $data['label']  = $this->label;
-            $data['heading']  = $this->multi;
-            $data['title']  = $this->sing;
+        $js = [];
+        $js[] = 'https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap.min.js';
+
+        $data['js'] = $js;
+        $data['dtable']  = 'admin/'.$this->route.'/get_json';
+        $data['label']  = $this->label;
+        $data['heading']  = $this->multi;
+        $data['title']  = $this->sing;
         $this->admin($this->dir.'/list', $data);
     }
-    public function get_json(){
+    public function get_json()
+    {
         $users = $this->Gender_model->get_all_ethnicities();
-        $data = array();
+        $data = [];
 
         foreach ($users as $user) {
             $action = '<a href="'.$this->admin_url.$this->route.'/edit/'.$user['id'].'" class="btn">Edit</a>|<a href="'.$this->admin_url.$this->route.'/delete/'.$user['id'].'" class="btn">Delete</a>';
-            $data[] = array(
+            $data[] = [
                 $user['id'],
                 $user['name'],
                 date('Y-m-d', strtotime($user['created_at'])),
                 $action
-            );
+            ];
         }
 
         echo json_encode([
@@ -49,7 +53,8 @@ class Gender extends Admin_Controller {
         ]);
     }
 
-    public function add() {
+    public function add()
+    {
         if ($this->input->post()) {
             $name = $this->input->post('name');
             $this->Gender_model->insert_ethnicity($name);
@@ -59,10 +64,11 @@ class Gender extends Admin_Controller {
         $data['title']  = $this->sing;
         $data['label']  = $this->label;
         $data['heading']  = $this->multi;
-        $this->admin($this->dir.'/add',$data);
+        $this->admin($this->dir.'/add', $data);
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $data['ethnicity'] = $this->Gender_model->get_ethnicity_by_id($id);
         if ($this->input->post()) {
             $name = $this->input->post('name');
@@ -76,7 +82,8 @@ class Gender extends Admin_Controller {
         $this->admin($this->dir.'/edit', $data);
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         $this->Gender_model->delete_ethnicity($id);
         $this->session->set_flashdata('success', $this->sing.' deleted successfully.');
         redirect('admin/'.$this->route);

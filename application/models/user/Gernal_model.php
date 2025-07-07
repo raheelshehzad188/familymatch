@@ -25,7 +25,8 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
 
     // Insert user_id as first param for the subquery
     $user_id = !empty($filters['user_id']) ? (int)$filters['user_id'] : 0;
-    $params[] = $user_id;
+    $params[] = $user_id; // for is_like
+    $params[] = $user_id; // for is_wink
 
     $sql = "
         SELECT 
@@ -47,7 +48,13 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
                 FROM profile_like pl
                 WHERE pl.user_id = ? AND pl.profile_id = p.id
                 LIMIT 1
-            ) AS is_like
+            ) AS is_like,
+            (
+                SELECT 1
+                FROM profile_wink pw
+                WHERE pw.user_id = ? AND pw.profile_id = p.id
+                LIMIT 1
+            ) AS is_wink
         FROM profiles p
         LEFT JOIN genders g ON p.gender = g.id
         LEFT JOIN referrals r ON p.reffer_id = r.id
@@ -119,7 +126,8 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
         if ($row->profile_image) {
             $row->profile_image = $base_upload_url . $row->profile_image;
         }
-        $row->is_liked = $row->is_liked ? 1 : 0;
+        $row->is_like = $row->is_like ? 1 : 0;
+        $row->is_wink = $row->is_wink ? 1 : 0;
     }
 
     return $query->result();

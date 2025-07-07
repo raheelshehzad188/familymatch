@@ -1,7 +1,9 @@
 <!-- API Key Form + Table (Bootstrap 3 Compatible) -->
 <div class="container">
 <form method="POST" class="form-horizontal" role="form">
-    <?php if (isset($msg)) echo $msg; ?>
+    <?php if (isset($msg)) {
+        echo $msg;
+    } ?>
 
     <div class="form-group">
         <label for="host" class="col-sm-2 control-label">Host</label>
@@ -37,7 +39,8 @@
         </tr>
     </thead>
     <tbody>
-        <?php if (!empty($keys)) : $i = 1; foreach ($keys as $row) : ?>
+        <?php if (!empty($keys)) : $i = 1;
+            foreach ($keys as $row) : ?>
         <tr>
             <td><?= $i++ ?></td>
             <td><?= htmlspecialchars($row->host) ?></td>
@@ -49,7 +52,8 @@
                 <a href="<?= base_url('admin/admin_keys/delete/' . $row->id) ?>" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure to delete this key?')">Remove</a>
             </td>
         </tr>
-        <?php endforeach; else: ?>
+        <?php endforeach;
+        else: ?>
         <tr>
             <td colspan="4" class="text-center">No API keys found.</td>
         </tr>

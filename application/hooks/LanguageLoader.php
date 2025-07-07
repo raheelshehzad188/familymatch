@@ -1,7 +1,10 @@
 <?php
-class LanguageLoader {
-    function initialize() {
-        $ci =& get_instance();
+
+class LanguageLoader
+{
+    public function initialize()
+    {
+        $ci = & get_instance();
         $site_lang = $ci->session->userdata('site_language');
         if ($site_lang) {
             $ci->lang->load('site', $site_lang);
@@ -10,5 +13,3 @@ class LanguageLoader {
         }
     }
 }
-
-?>

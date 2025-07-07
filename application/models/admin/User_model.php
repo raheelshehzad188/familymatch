@@ -1,19 +1,24 @@
 <?php
-class User_model extends CI_Model {
 
-    public function __construct() {
+class User_model extends CI_Model
+{
+    public function __construct()
+    {
         parent::__construct();
     }
 
-    public function get_all_users() {
-        
+    public function get_all_users()
+    {
+
         return $this->db->order_by('id', 'DESC')->get('users')->result(); // Table name is 'users'
     }
-    public function get_user_by_id($id) {
+    public function get_user_by_id($id)
+    {
         return $this->db->get_where('users', ['id' => $id])->row();
     }
 
-    public function update_user($id, $data) {
+    public function update_user($id, $data)
+    {
         $this->db->where('id', $id);
         return $this->db->update('users', $data);
     }
@@ -63,23 +68,23 @@ class User_model extends CI_Model {
         return $query->result();
     }
     public function get_profile_ethnicities($profile_id)
-{
-    $this->db->select('e.name');
-    $this->db->from('profile_ethnic pi');
-    $this->db->join('ethnicities e', 'pi.ethnic_id = e.id');  // Note: column name ethinc_id
-    $this->db->where('pi.profile_id', $profile_id);
-    $query = $this->db->get();
-    return $query->result();
-}
+    {
+        $this->db->select('e.name');
+        $this->db->from('profile_ethnic pi');
+        $this->db->join('ethnicities e', 'pi.ethnic_id = e.id');  // Note: column name ethinc_id
+        $this->db->where('pi.profile_id', $profile_id);
+        $query = $this->db->get();
+        return $query->result();
+    }
     public function get_profile_core_values($profile_id)
-{
-    $this->db->select('e.name');
-    $this->db->from('profile_cvalues pi');
-    $this->db->join('core_values e', 'pi.val_id = e.id');  // Note: column name ethinc_id
-    $this->db->where('pi.profile_id', $profile_id);
-    $query = $this->db->get();
-    return $query->result();
-}
+    {
+        $this->db->select('e.name');
+        $this->db->from('profile_cvalues pi');
+        $this->db->join('core_values e', 'pi.val_id = e.id');  // Note: column name ethinc_id
+        $this->db->where('pi.profile_id', $profile_id);
+        $query = $this->db->get();
+        return $query->result();
+    }
 
 
 
@@ -108,7 +113,7 @@ class User_model extends CI_Model {
         $this->db->order_by('r.user_id, q.id');
         $query = $this->db->get();
 
-        return $query->result ();
+        return $query->result();
     }
 
 }

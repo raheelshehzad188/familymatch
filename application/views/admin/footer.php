@@ -15,8 +15,7 @@
         <script type="text/javascript">
             var BASE_URL = '<?= base_url(); ?>';
             <?php
-            if(isset($dtable))
-            {
+            if (isset($dtable)) {
                 ?>
                 var DTABLE = '<?= $dtable ?>';
                 <?php
@@ -35,8 +34,7 @@
         <script src="<?php echo $assets_url; ?>assets/demo/chart-area-demo.js"></script>
         <script src="<?php echo $assets_url; ?>assets/demo/chart-bar-demo.js"></script>
         <?php
-        if(isset($js))
-        {
+        if (isset($js)) {
             foreach ($js as $key => $url) {
                 ?>
                 <script src="<?php echo $url; ?>"></script>
@@ -44,20 +42,19 @@
                 <?php
             }
         }
-        ?>
+            ?>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
         <?php
-            if(isset($dtable))
-            {
-                ?>
+                if (isset($dtable)) {
+                    ?>
                 <script src="<?php echo $assets_url.'js/dtable.js'; ?>"></script>
                 <?php
-            }
+                }
 
             ?>
         <?php
             $this->load->view('flash_js');
 
-        ?>
+            ?>
     </body>
 </html>

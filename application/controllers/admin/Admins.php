@@ -1,15 +1,18 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-require_once(APPPATH.'core/Admin_Controller.php');
-class Admins extends Admin_Controller {
 
-    public function __construct() {
+defined('BASEPATH') or exit('No direct script access allowed');
+require_once(APPPATH.'core/Admin_Controller.php');
+class Admins extends Admin_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('admin/Admin_model');
         $this->load->model('admin/Role_model');
     }
 
-    public function index($edit_id = null) {
+    public function index($edit_id = null)
+    {
         $data['admins'] = $this->Admin_model->get_all();
         $data['admin_user'] = null;
         $data['roles'] = $this->Role_model->get_all();
@@ -21,7 +24,8 @@ class Admins extends Admin_Controller {
         $this->admin('admin/admin_crud', $data);
     }
 
-    public function save() {
+    public function save()
+    {
         $id = $this->input->post('id');
 
         $data = [
@@ -44,7 +48,8 @@ class Admins extends Admin_Controller {
         redirect('admin/admins');
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         $this->Admin_model->delete($id);
         redirect('admin/admins');
     }

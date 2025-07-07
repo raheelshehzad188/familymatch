@@ -1,6 +1,6 @@
 <h4>Ethnicities</h4>
 
-<?php 
+<?php
 if (!empty($interests)) : ?>
     <ul>
         <?php foreach ($interests as $interest): ?><?= htmlspecialchars($interest->name) ?></li>

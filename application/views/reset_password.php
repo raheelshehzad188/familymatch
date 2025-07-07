@@ -23,7 +23,7 @@
     <?php if (isset($msg)) { ?>
         <div class="msg <?php echo $msg_type; ?>"> <?php echo $msg; ?> </div>
     <?php } ?>
-    <form method="post" action="">
+    <form method="post" action="<?php echo base_url('api/profile/reset_password'); ?>">
         <div class="form-group">
             <label for="new_password">New Password</label>
             <input type="password" id="new_password" name="new_password" required>

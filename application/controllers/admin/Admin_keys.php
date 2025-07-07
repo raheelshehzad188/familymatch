@@ -1,20 +1,24 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
-require_once(APPPATH.'core/Admin_Controller.php');
-class Admin_keys extends Admin_Controller {
 
-    public function __construct() {
+defined('BASEPATH') or exit('No direct script access allowed');
+require_once(APPPATH.'core/Admin_Controller.php');
+class Admin_keys extends Admin_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('admin/Keys_model');
     }
-    public function delete($id) {
-    $this->load->model('Keys_model');
-    $this->db->where('id', $id)->delete('keys');
-    redirect('admin/admin_keys');
-}
+    public function delete($id)
+    {
+        $this->load->model('Keys_model');
+        $this->db->where('id', $id)->delete('keys');
+        redirect('admin/admin_keys');
+    }
 
 
-    public function index() {
+    public function index()
+    {
         $data['keys'] = $this->Keys_model->get_all();
         $data['msg'] = '';
 

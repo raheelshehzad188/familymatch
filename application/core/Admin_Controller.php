@@ -1,22 +1,23 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Admin_Controller extends CI_Controller {
+defined('BASEPATH') or exit('No direct script access allowed');
+
+class Admin_Controller extends CI_Controller
+{
     public $exc_login = ['login'];
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
 
         // Load anything you need across all admin controllers
         $this->load->helper('url');
         $this->load->helper('my');
         $controller = $this->router->fetch_class();
-        if(!in_array($controller, $this->exc_login))
-        {
-            if(!isset($_SESSION['admin']))
-            {
+        if (!in_array($controller, $this->exc_login)) {
+            if (!isset($_SESSION['admin'])) {
                 $_SESSION['error'] = 'Invalid request!';
-        redirect('admin/login');
+                redirect('admin/login');
             }
         }
         $this->admin = $_SESSION['admin'];
@@ -26,19 +27,18 @@ class Admin_Controller extends CI_Controller {
 
 
     }
-    public $admin = array(); 
+    public $admin = [];
     public $assets_url;
     public $admin_url;
     public $para1 = '';
-    public function full($view,$data = array())
+    public function full($view, $data = [])
     {
-        if(!isset($data['assets_url']))
-        {
+        if (!isset($data['assets_url'])) {
             $data['assets_url'] = $this->assets_url;
         }
 
 
-        $this->load->view($view,$data);
+        $this->load->view($view, $data);
     }
     public function get_crud()
     {
@@ -46,22 +46,18 @@ class Admin_Controller extends CI_Controller {
     }
     public function get_side_bar()
     {
-        $role_id = ($this->admin->role_id)?$this->admin->role_id:0;
-        $role = $this->db->where('id',$role_id)->get('roles')->row();
-        return (isset($role->slug))?'sidebar_'.$role->slug.'.php':'sidebar.php';
+        $role_id = ($this->admin->role_id) ? $this->admin->role_id : 0;
+        $role = $this->db->where('id', $role_id)->get('roles')->row();
+        return (isset($role->slug)) ? 'sidebar_'.$role->slug.'.php' : 'sidebar.php';
     }
-    public function admin($view,$data = array())
+    public function admin($view, $data = [])
     {
-        if(!isset($data['assets_url']))
-        {
+        if (!isset($data['assets_url'])) {
             $data['assets_url'] = $this->assets_url;
         }
-        if(!isset($data['title']))
-        {
+        if (!isset($data['title'])) {
             $data['title'] = SITE_NAME;
-        }
-        else
-        {
+        } else {
             $data['title'] = $data['title'].' > '.SITE_NAME;
         }
         $data['admin'] = $this->admin;
@@ -70,7 +66,7 @@ class Admin_Controller extends CI_Controller {
         $data['controller'] = $this->router->fetch_class();
         $data['method'] = $this->router->fetch_method();
         $data['param1'] = $this->para1;
-        $data['content'] = $this->load->view($view,$data,true);
-        $this->load->view(ADMIN_LAYOUT,$data);
+        $data['content'] = $this->load->view($view, $data, true);
+        $this->load->view(ADMIN_LAYOUT, $data);
     }
 }

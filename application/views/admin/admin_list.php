@@ -21,7 +21,7 @@
         </tr>
     </thead>
     <tbody>
-        <?php foreach($admins as $admin): ?>
+        <?php foreach ($admins as $admin): ?>
         <tr>
             <td><?= $admin->id ?></td>
             <td><?= $admin->name ?></td>

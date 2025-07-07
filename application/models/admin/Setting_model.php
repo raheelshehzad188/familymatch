@@ -1,7 +1,9 @@
 <?php
-class Setting_model extends CI_Model {
 
-    public function get_all_settings() {
+class Setting_model extends CI_Model
+{
+    public function get_all_settings()
+    {
         $query = $this->db->get('settings');
         $data = [];
         foreach ($query->result() as $row) {
@@ -10,7 +12,8 @@ class Setting_model extends CI_Model {
         return $data;
     }
 
-    public function update_setting($key, $value) {
+    public function update_setting($key, $value)
+    {
         $exists = $this->db->get_where('settings', ['meta_key' => $key])->row();
 
         if ($exists) {
@@ -20,11 +23,10 @@ class Setting_model extends CI_Model {
         }
     }
 
-    public function update_settings_batch($data) {
+    public function update_settings_batch($data)
+    {
         foreach ($data as $key => $value) {
             $this->update_setting($key, $value);
         }
     }
 }
-
-?>

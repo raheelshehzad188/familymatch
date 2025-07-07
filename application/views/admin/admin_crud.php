@@ -31,7 +31,7 @@
                     <label>Role:</label>
                     <select name="role_id" class="form-control" required>
                         <option value="">Select Role</option>
-                        <?php foreach($roles as $role): ?>
+                        <?php foreach ($roles as $role): ?>
                             <option value="<?= $role->id ?>" <?= isset($admin_user) && $admin_user->role_id == $role->id ? 'selected' : '' ?>>
                                 <?= $role->title ?>
                             </option>
@@ -59,7 +59,7 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach($admins as $a): ?>
+            <?php foreach ($admins as $a): ?>
             <tr>
                 <td><?= $a->id ?></td>
                 <td><?= $a->name ?></td>

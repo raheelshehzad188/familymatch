@@ -18,9 +18,11 @@
 
 <div id="tab_images" class="tab-content">
     <h3>User Images</h3>
-    <?php if (!empty($images)) foreach ($images as $img): ?>
+    <?php if (!empty($images)) {
+        foreach ($images as $img): ?>
         <img src="<?= base_url($img->image_path) ?>" width="100" style="margin:5px;">
-    <?php endforeach; ?>
+    <?php endforeach;
+    } ?>
 </div>
 
 <div id="tab_survey" class="tab-content">

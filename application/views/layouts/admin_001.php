@@ -13,7 +13,7 @@ include APPPATH."views/admin/".$side_bar;
             <div id="layoutSidenav_content">
                 <?php
                 echo $content;
-                ?>
+?>
 <?php
 include APPPATH . "views/admin/footer.php";
 ?>

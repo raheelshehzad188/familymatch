@@ -1,163 +1,147 @@
 <?php
 
-class Profile_model extends CI_Model {
-
-    public function __construct() {
+class Profile_model extends CI_Model
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->database();
     }
 
     // Update family profile
-    public function updateFamilyProfile($id,$data) {
+    public function updateFamilyProfile($id, $data)
+    {
         // Start a transaction
         $this->db->trans_begin();
 
         // Update family table
         $up = [];
 
-        if(isset($data['cvalues']) && $data['cvalues'])
-        {
+        if (isset($data['cvalues']) && $data['cvalues']) {
             $cvalues = explode(',', $data['cvalues']); // IDs from request
-$profile_id = $id;
+            $profile_id = $id;
 
-// Step 1: Get all existing interest IDs for the profile
-$existing = $this->db->select('val_id')
-    ->where('profile_id', $profile_id)
-    ->get('profile_cvalues')
-    ->result_array();
+            // Step 1: Get all existing interest IDs for the profile
+            $existing = $this->db->select('val_id')
+                ->where('profile_id', $profile_id)
+                ->get('profile_cvalues')
+                ->result_array();
 
-$existing_ids = array_column($existing, 'val_id');
+            $existing_ids = array_column($existing, 'val_id');
 
-// Step 2: Calculate interests to insert and delete
-$to_insert = array_diff($cvalues, $existing_ids);
-$to_delete = array_diff($existing_ids, $cvalues);
+            // Step 2: Calculate interests to insert and delete
+            $to_insert = array_diff($cvalues, $existing_ids);
+            $to_delete = array_diff($existing_ids, $cvalues);
 
-// Step 3: Delete removed interests
-if (!empty($to_delete)) {
-    $this->db->where('profile_id', $profile_id);
-    $this->db->where_in('val_id', $to_delete);
-    $this->db->delete('profile_cvalues');
-}
+            // Step 3: Delete removed interests
+            if (!empty($to_delete)) {
+                $this->db->where('profile_id', $profile_id);
+                $this->db->where_in('val_id', $to_delete);
+                $this->db->delete('profile_cvalues');
+            }
 
-// Step 4: Insert new interests
-$insert_data = [];
-foreach ($to_insert as $interest_id) {
-    $insert_data[] = [
-        'profile_id' => $profile_id,
-        'val_id' => $interest_id
-    ];
-}
+            // Step 4: Insert new interests
+            $insert_data = [];
+            foreach ($to_insert as $interest_id) {
+                $insert_data[] = [
+                    'profile_id' => $profile_id,
+                    'val_id' => $interest_id
+                ];
+            }
 
-if (!empty($insert_data)) {
-    $this->db->insert_batch('profile_cvalues', $insert_data);
-}
+            if (!empty($insert_data)) {
+                $this->db->insert_batch('profile_cvalues', $insert_data);
+            }
 
         }
 
-        if(isset($data['ethnic']) && $data['ethnic'])
-        {
-            
+        if (isset($data['ethnic']) && $data['ethnic']) {
+
             $ethnics = explode(',', $data['ethnic']); // IDs from request
-$profile_id = $id;
+            $profile_id = $id;
 
-// Step 1: Get existing ethnic IDs for the profile
-$existing = $this->db->select('ethnic_id')
-    ->where('profile_id', $profile_id)
-    ->get('profile_ethnic')
-    ->result_array();
+            // Step 1: Get existing ethnic IDs for the profile
+            $existing = $this->db->select('ethnic_id')
+                ->where('profile_id', $profile_id)
+                ->get('profile_ethnic')
+                ->result_array();
 
-$existing_ids = array_column($existing, 'ethnic_id');
+            $existing_ids = array_column($existing, 'ethnic_id');
 
-// Step 2: Identify new to insert and old to delete
-$to_insert = array_diff($ethnics, $existing_ids);
-$to_delete = array_diff($existing_ids, $ethnics);
+            // Step 2: Identify new to insert and old to delete
+            $to_insert = array_diff($ethnics, $existing_ids);
+            $to_delete = array_diff($existing_ids, $ethnics);
 
-// Step 3: Delete ethnicities that are no longer present
-if (!empty($to_delete)) {
-    $this->db->where('profile_id', $profile_id);
-    $this->db->where_in('ethnic_id', $to_delete);
-    $this->db->delete('profile_ethnic');
-}
+            // Step 3: Delete ethnicities that are no longer present
+            if (!empty($to_delete)) {
+                $this->db->where('profile_id', $profile_id);
+                $this->db->where_in('ethnic_id', $to_delete);
+                $this->db->delete('profile_ethnic');
+            }
 
-// Step 4: Insert new ethnicities
-$insert_data = [];
-foreach ($to_insert as $ethnic_id) {
-    $insert_data[] = [
-        'profile_id' => $profile_id,
-        'ethnic_id' => $ethnic_id
-    ];
-}
+            // Step 4: Insert new ethnicities
+            $insert_data = [];
+            foreach ($to_insert as $ethnic_id) {
+                $insert_data[] = [
+                    'profile_id' => $profile_id,
+                    'ethnic_id' => $ethnic_id
+                ];
+            }
 
-if (!empty($insert_data)) {
-    $this->db->insert_batch('profile_ethnic', $insert_data);
-}
+            if (!empty($insert_data)) {
+                $this->db->insert_batch('profile_ethnic', $insert_data);
+            }
 
 
         }
         //profile_cvalues
-        if(isset($data['height']))
-        {
+        if (isset($data['height'])) {
             $up['height'] = $data['height'];
         }
-        if(isset($data['city_id']))
-        {
+        if (isset($data['city_id'])) {
             $up['city_id'] = $data['city_id'];
         }
-        if(isset($data['blood_group']))
-        {
+        if (isset($data['blood_group'])) {
             $up['blood_group'] = $data['blood_group'];
         }
-        if(isset($data['state_id']))
-        {
+        if (isset($data['state_id'])) {
             $up['state_id'] = $data['state_id'];
         }
-        if(isset($data['country_id']))
-        {
+        if (isset($data['country_id'])) {
             $up['country_id'] = $data['country_id'];
         }
-        if(isset($data['gender']))
-        {
+        if (isset($data['gender'])) {
             $up['gender'] = $data['gender'];
         }
-        if(isset($data['religion_id']))
-        {
+        if (isset($data['religion_id'])) {
             $up['religion_id'] = $data['religion_id'];
         }
-        if(isset($data['reffer_id']))
-        {
+        if (isset($data['reffer_id'])) {
             $up['reffer_id'] = $data['reffer_id'];
         }
-        if(isset($data['full_name']))
-        {
+        if (isset($data['full_name'])) {
             $up['full_name'] = $data['full_name'];
         }
-        if(isset($data['bio']))
-        {
+        if (isset($data['bio'])) {
             $up['bio'] = $data['bio'];
         }
-        if(isset($data['dob']))
-        {
+        if (isset($data['dob'])) {
             $up['dob'] = date("Y-m-d", strtotime($data['dob']));
         }
-        if(isset($data['profile_pic']))
-        {
+        if (isset($data['profile_pic'])) {
             $up['profile_pic'] = $data['profile_pic'];
         }
-        if(isset($data['country']))
-        {
+        if (isset($data['country'])) {
             $up['country'] = $data['country'];
         }
-        if(isset($data['marital_status']))
-        {
+        if (isset($data['marital_status'])) {
             $up['marital_status'] = $data['marital_status'];
         }
-        if(isset($data['qualification_id']))
-        {
+        if (isset($data['qualification_id'])) {
             $up['qualification_id'] = $data['qualification_id'];
         }
 
-        if(isset($data['body_type']))
-        {
+        if (isset($data['body_type'])) {
             $up['body_type'] = $data['body_type'];
         }
         $this->db->where('id', $id);
@@ -177,7 +161,7 @@ if (!empty($insert_data)) {
         if (!empty($data['interests'])) {
             $this->db->where('profile_id', $profile_id);
             $this->db->delete('profile_intersts');  // Remove existing interests
-            $i = explode(',',$data['interests']);
+            $i = explode(',', $data['interests']);
 
             foreach ($i as $interest_id) {
                 $this->db->insert('profile_intersts', [
@@ -188,7 +172,7 @@ if (!empty($insert_data)) {
         }
 
         // Commit or rollback the transaction
-        if ($this->db->trans_status() === FALSE) {
+        if ($this->db->trans_status() === false) {
             $this->db->trans_roll_back();
             return false;
         } else {
@@ -199,14 +183,11 @@ if (!empty($insert_data)) {
     public function get_profile_id($user_id)
     {
         $tbl = 'profiles';
-        $d = array('user_id'=>$user_id);
+        $d = ['user_id' => $user_id];
         $already = $this->db->where($d)->get($tbl)->row();
-        if($already)
-        {
+        if ($already) {
             return $already->id;
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
@@ -229,89 +210,87 @@ if (!empty($insert_data)) {
         $this->db->order_by('r.user_id, q.id');
         $query = $this->db->get();
 
-        return $query->result ();
+        return $query->result();
     }
     public function get_user_id($user_id)
     {
         $tbl = 'profiles';
-        $d = array('id'=>$user_id);
+        $d = ['id' => $user_id];
         $already = $this->db->where($d)->get($tbl)->row();
-        if($already)
-        {
+        if ($already) {
             return $already->user_id;
-        }
-        else
-        {
+        } else {
             return 0;
         }
     }
-    public function ignore_profile($user_id,$profile_id)
+    public function ignore_profile($user_id, $profile_id)
     {
         $tbl = 'profile_ignore';
-        $d = array('user_id'=>$user_id,'profile_id'=>$profile_id);
+        $d = ['user_id' => $user_id,'profile_id' => $profile_id];
         $already = $this->db->where($d)->get($tbl)->row();
-        if($already)
-        {
-            return $this->db->where('id',$already->id)->delete($tbl);
-        }
-        else
-        {
-            return $this->db->insert($tbl,$d);
+        if ($already) {
+            return $this->db->where('id', $already->id)->delete($tbl);
+        } else {
+            return $this->db->insert($tbl, $d);
         }
     }
-    public function like_profile($user_id,$profile_id)
+    public function like_profile($user_id, $profile_id)
     {
         $tbl = 'profile_like';
-        $d = array('user_id'=>$user_id,'profile_id'=>$profile_id);
+        $d = ['user_id' => $user_id,'profile_id' => $profile_id];
         $already = $this->db->where($d)->get($tbl)->row();
-        if($already)
-        {
-            return $this->db->where('id',$already->id)->delete($tbl);
-        }
-        else
-        {
-            return $this->db->insert($tbl,$d);
+        if ($already) {
+            return $this->db->where('id', $already->id)->delete($tbl);
+        } else {
+            return $this->db->insert($tbl, $d);
         }
     }
     public function get_likes($user_id)
     {
         $tbl = 'profile_like';
-        $d = array('user_id'=>$user_id);
+        $d = ['user_id' => $user_id];
         return $already = $this->db->where($d)->get($tbl)->result_array();
-        
+
     }
-    public function wink_profile($user_id,$profile_id)
+    public function wink_profile($user_id, $profile_id)
     {
         $tbl = 'profile_wink';
-        $d = array('user_id'=>$user_id,'profile_id'=>$profile_id);
+        $d = ['user_id' => $user_id,'profile_id' => $profile_id];
         $already = $this->db->where($d)->get($tbl)->row();
-        if($already)
-        {
+        if ($already) {
             $d['create_at'] = date('Y-m-d H:i:s');
-            return $this->db->where('id',$already->id)->update($tbl,$d);
+            return $this->db->where('id', $already->id)->update($tbl, $d);
             // return $this->db->where('id',$already->id)->delete($tbl);
-        }
-        else
-        {
-            return $this->db->insert($tbl,$d);
+        } else {
+            return $this->db->insert($tbl, $d);
         }
     }
     public function get_winks($user_id)
     {
         $tbl = 'profile_wink';
-        $d = array('user_id'=>$user_id);
+        $d = ['user_id' => $user_id];
         return $already = $this->db->where($d)->get($tbl)->result_array();
-        
+
     }
-    public function get_sql_matched_profiles($user_id, $limit = 10, $offset = 0, $filters = []) {
-    // Start base SQL
-    $sql = "
+    public function get_sql_matched_profiles($user_id, $limit = 10, $offset = 0, $filters = [])
+    {
+        // Start base SQL
+        $sql = "
         SELECT 
             p.*,
         m.thumb_path AS profile_image,
-
-
-
+            (
+                SELECT 1
+                FROM profile_like pl
+                WHERE pl.user_id = ? AND pl.profile_id = p.id
+                LIMIT 1
+            ) AS is_like,
+            (
+                SELECT 1
+                FROM profile_wink pw
+                WHERE pw.user_id = ? AND pw.profile_id = p.id
+                LIMIT 1
+            ) AS is_wink,
             (
                 (CASE WHEN p.country_id = u.country_id THEN 20 ELSE 0 END) +
                 (CASE WHEN p.state_id = u.state_id THEN 15 ELSE 0 END) +
@@ -329,48 +308,75 @@ if (!empty($insert_data)) {
         WHERE p.user_id != ?
     ";
 
-    $params = [$user_id, $user_id];
+        $params = [$user_id, $user_id, $user_id, $user_id]; // First two for JOIN, third for is_like, fourth for is_wink
 
-    // Dynamic filters
-    if (!empty($filters['gender'])) {
-        $sql .= " AND p.gender = ? ";
-        $params[] = $filters['gender'];
+        // Dynamic filters
+        if (!empty($filters['gender'])) {
+            $sql .= " AND p.gender = ? ";
+            $params[] = $filters['gender'];
+        }
+
+        if (!empty($filters['country_id'])) {
+            $sql .= " AND p.country_id = ? ";
+            $params[] = $filters['country_id'];
+        }
+
+        if (!empty($filters['state_id'])) {
+            $sql .= " AND p.state_id = ? ";
+            $params[] = $filters['state_id'];
+        }
+
+        if (!empty($filters['city_id'])) {
+            $sql .= " AND p.city_id = ? ";
+            $params[] = $filters['city_id'];
+        }
+
+        // You can add: only show verified/active profiles
+        // $sql .= " AND p.verified = 1 ";
+
+        // Sort by best matches
+        $sql .= " ORDER BY match_score DESC ";
+
+        // Pagination
+        $sql .= " LIMIT ? OFFSET ? ";
+        $params[] = (int)$limit;
+        $params[] = (int)$offset;
+
+        $query = $this->db->query($sql, $params);
+        $base_upload_url = base_url();
+
+        foreach ($query->result() as $row) {
+            if ($row->profile_image) {
+                $row->profile_image = $base_upload_url . $row->profile_image;
+            }
+            $row->is_like = $row->is_like ? 1 : 0;
+            $row->is_wink = $row->is_wink ? 1 : 0;
+        }
+        return $query->result();
     }
 
-    if (!empty($filters['country_id'])) {
-        $sql .= " AND p.country_id = ? ";
-        $params[] = $filters['country_id'];
+    public function favorite_profile($user_id, $profile_id)
+    {
+        $tbl = 'profile_favorite';
+        $d = ['user_id' => $user_id,'profile_id' => $profile_id];
+        $already = $this->db->where($d)->get($tbl)->row();
+        if ($already) {
+            return $this->db->where('id', $already->id)->delete($tbl);
+        } else {
+            return $this->db->insert($tbl, $d);
+        }
     }
-
-    if (!empty($filters['state_id'])) {
-        $sql .= " AND p.state_id = ? ";
-        $params[] = $filters['state_id'];
+    public function get_favorites($user_id)
+    {
+        $tbl = 'profile_favorite';
+        $d = ['user_id' => $user_id];
+        return $already = $this->db->where($d)->get($tbl)->result_array();
     }
-
-    if (!empty($filters['city_id'])) {
-        $sql .= " AND p.city_id = ? ";
-        $params[] = $filters['city_id'];
+    public function get_ignores($user_id)
+    {
+        $tbl = 'profile_ignore';
+        $d = ['user_id' => $user_id];
+        return $already = $this->db->where($d)->get($tbl)->result_array();
     }
-
-    // You can add: only show verified/active profiles
-    // $sql .= " AND p.verified = 1 ";
-
-    // Sort by best matches
-    $sql .= " ORDER BY match_score DESC ";
-
-    // Pagination
-    $sql .= " LIMIT ? OFFSET ? ";
-    $params[] = (int)$limit;
-    $params[] = (int)$offset;
-
-    $query = $this->db->query($sql, $params);
-    $base_upload_url = base_url();
-
-foreach ($query->result() as $row) {
-    if($row->profile_image)
-    $row->profile_image = $base_upload_url . $row->profile_image;
-}
-    return $query->result();
-}
 
 }

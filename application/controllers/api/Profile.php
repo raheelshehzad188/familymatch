@@ -134,7 +134,7 @@ class Profile extends API_Controller
         $likes = $this->Profile_model->get_winks($this->user_id);
         $n = [];
         foreach ($likes as $key => $value) {
-            $n [] = $this->getProfile($this->Profile_model->get_user_id($value['profile_id']));
+            $n [] = $this->getShortProfile($this->Profile_model->get_user_id($value['profile_id']));
         }
         $this->response([
                 'status' => true,
@@ -222,6 +222,7 @@ class Profile extends API_Controller
         if ($r) {
             $this->response([
             'status' => true,
+            'is_wink' => $this->is_wink($user_id, $profile_id),
             'message' => 'Action perform successfully.',
         ], REST_Controller::HTTP_CREATED);
 

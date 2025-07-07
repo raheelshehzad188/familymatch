@@ -51,6 +51,6 @@ $assets_url = $assets_url.'/login/';
   <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
   <?php
           $this->load->view('flash_js');
-        ?>
+?>
 </body>
 </html>

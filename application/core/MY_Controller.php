@@ -1,8 +1,10 @@
 <?php
-// application/core/MY_Controller.php
-class MY_Controller extends CI_Controller {
 
-    public function __construct() {
+// application/core/MY_Controller.php
+class MY_Controller extends CI_Controller
+{
+    public function __construct()
+    {
         parent::__construct();
         die('OKK');
         // Add your custom logic here

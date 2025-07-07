@@ -1,10 +1,10 @@
 <script>
 	console.log(typeof $.notify);
  
-    <?php if(isset($_SESSION['error'])): 
-    	$error = $_SESSION['error'];
-    	unset($_SESSION['error']);
-    	?>
+    <?php if (isset($_SESSION['error'])):
+        $error = $_SESSION['error'];
+        unset($_SESSION['error']);
+        ?>
         $(document).ready(function() {
             $.notify("<?= $error; ?>", {
                 className: 'error',
@@ -13,10 +13,10 @@
         });
     <?php endif; ?>
 </script>
-<?php if (isset($_SESSION['success'])): 
-	$success = $_SESSION['success'];
+<?php if (isset($_SESSION['success'])):
+    $success = $_SESSION['success'];
     unset($_SESSION['success']);
-	?>
+    ?>
     <script>
         $(document).ready(function() {
             $.notify("<?php echo $success; ?>", {

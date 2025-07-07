@@ -29,7 +29,7 @@
                                         echo "<th>{$field['label']}</th>";
                                     }
                                 }
-                                ?>
+            ?>
                                 <th>Created</th>
                                 <th class="text-center">Action</th>
                             </tr>
@@ -71,7 +71,7 @@
                                       </td>";
                                 echo "</tr>";
                             }
-                            ?>
+            ?>
                         </tbody>
                     </table>
                 </div>

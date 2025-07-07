@@ -1,6 +1,6 @@
 <h3>Survey Responses</h3>
 
-<?php 
+<?php
 if (!empty($survey)): ?>
     <table border="1" cellpadding="8" cellspacing="0" width="100%">
         <thead>
@@ -22,4 +22,4 @@ if (!empty($survey)): ?>
     </table>
     <?php
 endif;
-    ?>
+?>

@@ -1,6 +1,6 @@
 <h4>Interests</h4>
 
-<?php 
+<?php
 
 if (!empty($interests)) : ?>
     <ul>

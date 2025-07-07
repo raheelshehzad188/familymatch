@@ -1,6 +1,7 @@
 <h2>Edit <?= $label ?></h2>
 <?php
-function get_file_type($file_path) {
+function get_file_type($file_path)
+{
     // First check if file exists
     if (!file_exists($file_path)) {
         return 'invalid'; // Or return false
@@ -25,20 +26,17 @@ function get_file_type($file_path) {
 
         $file = dirname(__FILE__).'/fields/'.$value['type'].'.php';
 
-        if(file_exists($file))
-        {
+        if (file_exists($file)) {
             include $file;
-        }
-        else
-        {
+        } else {
 
             $file = 'fields/default.php';
             include $file;
         }
 
 
-        
+
     }
-    ?>
+?>
     <button type="submit" class="btn btn-primary">Save</button>
 </form>

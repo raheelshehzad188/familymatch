@@ -12,14 +12,14 @@
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
                             <?php
-                            $arr = array('religions','blood_groups','marital_status');
+                            $arr = ['religions','blood_groups','marital_status'];
 
                             ?>
-                            <div class="collapse <?= (isset($controller) && $controller == 'crud' && isset($param1) && in_array($param1,$arr))?'show':'' ?>" id="user_attribute" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse <?= (isset($controller) && $controller == 'crud' && isset($param1) && in_array($param1, $arr)) ? 'show' : '' ?>" id="user_attribute" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link <?= ($param1 == 'religions')?'active':'' ?>" href="<?= base_url('admin/crud/all/religions'); ?>">Religion</a>
-                                    <a class="nav-link <?= ($param1 == 'blood_groups')?'active':'' ?>" href="<?= base_url('admin/crud/all/blood_groups') ?>">Blood group</a>
-                                    <a class="nav-link <?= ($param1 == 'marital_status')?'active':'' ?>" href="<?= base_url('admin/crud/all/marital_status') ?>">Marital status</a>
+                                    <a class="nav-link <?= ($param1 == 'religions') ? 'active' : '' ?>" href="<?= base_url('admin/crud/all/religions'); ?>">Religion</a>
+                                    <a class="nav-link <?= ($param1 == 'blood_groups') ? 'active' : '' ?>" href="<?= base_url('admin/crud/all/blood_groups') ?>">Blood group</a>
+                                    <a class="nav-link <?= ($param1 == 'marital_status') ? 'active' : '' ?>" href="<?= base_url('admin/crud/all/marital_status') ?>">Marital status</a>
                                 </nav>
                             </div>
                       
@@ -79,10 +79,10 @@
                                 Interestes
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse <?= (isset($controller) && $controller == 'interest')?'show':'' ?>" id="collapseinterest" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse <?= (isset($controller) && $controller == 'interest') ? 'show' : '' ?>" id="collapseinterest" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link <?= ( $controller == 'interest' && isset($method) && $method == 'index')?'active':'' ?>" href="<?= $this->admin_url.'interest'; ?>">All Interests</a>
-                                    <a class="nav-link <?= ( $controller == 'interest' && isset($method) && $method == 'add')?'active':'' ?>" href="<?= $this->admin_url.'interest/add'; ?>">Add Interest</a>
+                                    <a class="nav-link <?= ($controller == 'interest' && isset($method) && $method == 'index') ? 'active' : '' ?>" href="<?= $this->admin_url.'interest'; ?>">All Interests</a>
+                                    <a class="nav-link <?= ($controller == 'interest' && isset($method) && $method == 'add') ? 'active' : '' ?>" href="<?= $this->admin_url.'interest/add'; ?>">Add Interest</a>
                                 </nav>
                             </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseETH" aria-expanded="false" aria-controls="collapseETH">
@@ -90,10 +90,10 @@
                                 Ethnicities
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse <?= (isset($controller) && $controller == 'ethnicity')?'show':'' ?>" id="collapseETH" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse <?= (isset($controller) && $controller == 'ethnicity') ? 'show' : '' ?>" id="collapseETH" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link <?= ( $controller == 'ethnicity' && isset($method) && $method == 'index')?'active':'' ?>" href="<?= $this->admin_url.'ethnicity'; ?>">All Ethnicities</a>
-                                    <a class="nav-link <?= ( $controller == 'ethnicity' && isset($method) && $method == 'add')?'active':'' ?>" href="<?= $this->admin_url.'ethnicity/add'; ?>">Add Ethnicity</a>
+                                    <a class="nav-link <?= ($controller == 'ethnicity' && isset($method) && $method == 'index') ? 'active' : '' ?>" href="<?= $this->admin_url.'ethnicity'; ?>">All Ethnicities</a>
+                                    <a class="nav-link <?= ($controller == 'ethnicity' && isset($method) && $method == 'add') ? 'active' : '' ?>" href="<?= $this->admin_url.'ethnicity/add'; ?>">Add Ethnicity</a>
                                 </nav>
                             </div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseSur" aria-expanded="false" aria-controls="collapseSur">
@@ -101,15 +101,15 @@
                                 Servey
                                 <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                             </a>
-                            <div class="collapse <?= (isset($controller) && $controller == 'servey')?'show':'' ?>" id="collapseSur" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <div class="collapse <?= (isset($controller) && $controller == 'servey') ? 'show' : '' ?>" id="collapseSur" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                                 <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link <?= ($controller == 'servey' && isset($method) && $method == 'index')?'active':'' ?>" href="<?= $this->admin_url.'servey'; ?>">All Questions</a>
-                                    <a class="nav-link <?= ($controller == 'servey' && isset($method) && $method == 'add_question')?'active':'' ?>" href="<?= $this->admin_url.'servey/add_question'; ?>">Add Question</a>
-                                    <a class="nav-link <?= ($controller == 'servey' && isset($method) && $method == 'results')?'active':'' ?>" href="<?= $this->admin_url.'servey/results'; ?>">Results</a>
+                                    <a class="nav-link <?= ($controller == 'servey' && isset($method) && $method == 'index') ? 'active' : '' ?>" href="<?= $this->admin_url.'servey'; ?>">All Questions</a>
+                                    <a class="nav-link <?= ($controller == 'servey' && isset($method) && $method == 'add_question') ? 'active' : '' ?>" href="<?= $this->admin_url.'servey/add_question'; ?>">Add Question</a>
+                                    <a class="nav-link <?= ($controller == 'servey' && isset($method) && $method == 'results') ? 'active' : '' ?>" href="<?= $this->admin_url.'servey/results'; ?>">Results</a>
                                 </nav>
                             </div>
-                            <a class="nav-link <?= (isset($controller) && $controller == 'user')?'active':'' ?>" href="<?= $this->admin_url.'user'; ?>">All Users</a>
-                            <a class="nav-link <?= (isset($controller) && $controller == 'admin_keys')?'active':'' ?>" href="<?= $this->admin_url.'admin_keys'; ?>">API Keys</a>
+                            <a class="nav-link <?= (isset($controller) && $controller == 'user') ? 'active' : '' ?>" href="<?= $this->admin_url.'user'; ?>">All Users</a>
+                            <a class="nav-link <?= (isset($controller) && $controller == 'admin_keys') ? 'active' : '' ?>" href="<?= $this->admin_url.'admin_keys'; ?>">API Keys</a>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
                                 <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                                 Layouts

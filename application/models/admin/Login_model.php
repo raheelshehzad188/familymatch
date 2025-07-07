@@ -1,18 +1,21 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Login_model extends CI_Model {
+defined('BASEPATH') or exit('No direct script access allowed');
 
+class Login_model extends CI_Model
+{
     // Thresholds
     private $max_attempts = 5;
     private $block_duration = '1 hour';
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
     // Verify admin credentials
-    public function verify_admin($email, $password) {
+    public function verify_admin($email, $password)
+    {
         $this->db->where('email', $email);
         $admin = $this->db->get('admins')->row();
         $hashedPassword = password_hash('admin', PASSWORD_BCRYPT);
@@ -24,13 +27,15 @@ class Login_model extends CI_Model {
     }
 
     // Fetch attempt record
-    public function get_attempts($ip) {
+    public function get_attempts($ip)
+    {
         $this->db->where('ip_address', $ip);
         return $this->db->get('login_attempts')->row();
     }
 
     // Check if IP is currently blocked
-    public function is_blocked($ip) {
+    public function is_blocked($ip)
+    {
         $rec = $this->get_attempts($ip);
         if ($rec && $rec->blocked_until !== null) {
             // agar abhi bhi block time future me hai
@@ -44,7 +49,8 @@ class Login_model extends CI_Model {
     }
 
     // Add a failed attempt, and block if threshold reached
-    public function add_attempt($ip) {
+    public function add_attempt($ip)
+    {
         $now = date('Y-m-d H:i:s');
         $rec = $this->get_attempts($ip);
 
@@ -82,7 +88,8 @@ class Login_model extends CI_Model {
     }
 
     // Reset/delete the record so that IP is unblocked and count zero ho
-    public function reset_attempts($ip) {
+    public function reset_attempts($ip)
+    {
         $this->db->where('ip_address', $ip)
                  ->delete('login_attempts');
     }
