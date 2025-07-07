@@ -286,11 +286,14 @@ class Profile_model extends CI_Model
     }
     public function get_sql_matched_profiles($user_id, $limit = 10, $offset = 0, $filters = [])
     {
-        // Start base SQL
+        // Get current user's profile ID
+        $current_profile_id = $this->get_profile_id($user_id);
+        
+        // Start base SQL - find profiles where current user's profile ID appears in relationship tables
         $sql = "
         SELECT 
             p.*,
-        m.thumb_path AS profile_image,
+            m.thumb_path AS profile_image,
             (
                 SELECT 1
                 FROM profile_like pl
@@ -318,9 +321,41 @@ class Profile_model extends CI_Model
         LEFT JOIN media m ON m.id = p.profile_pic
         JOIN profiles u ON u.user_id = ?
         WHERE p.user_id != ?
+        AND (
+            p.id IN (
+                SELECT profile_id 
+                FROM profile_like 
+                WHERE user_id = ?
+            )
+            OR p.id IN (
+                SELECT profile_id 
+                FROM profile_wink 
+                WHERE user_id = ?
+            )
+            OR p.id IN (
+                SELECT profile_id 
+                FROM profile_favorite 
+                WHERE user_id = ?
+            )
+            OR p.user_id IN (
+                SELECT user_id 
+                FROM profile_like 
+                WHERE profile_id = ?
+            )
+            OR p.user_id IN (
+                SELECT user_id 
+                FROM profile_wink 
+                WHERE profile_id = ?
+            )
+            OR p.user_id IN (
+                SELECT user_id 
+                FROM profile_favorite 
+                WHERE profile_id = ?
+            )
+        )
     ";
 
-        $params = [$user_id, $user_id, $user_id, $user_id]; // First two for JOIN, third for is_like, fourth for is_wink
+        $params = [$user_id, $user_id, $user_id, $user_id, $user_id, $user_id, $user_id, $current_profile_id, $current_profile_id, $current_profile_id]; 
 
         // Dynamic filters
         if (!empty($filters['gender'])) {
