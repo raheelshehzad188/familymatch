@@ -277,6 +277,53 @@ class Profile_model extends CI_Model
         return $this->db->query($sql, [$user_id])->result_array();
     }
 
+    public function get_received_winks_profiles($user_id, $limit = 10, $offset = 0)
+    {
+        // Get current user's profile ID
+        $current_profile_id = $this->get_profile_id($user_id);
+        
+        // Get profiles of users who have winked at the current user
+        $sql = "
+        SELECT 
+            p.*,
+            m.thumb_path AS profile_image,
+            pw.create_at as wink_date,
+            (
+                SELECT 1
+                FROM profile_like pl
+                WHERE pl.user_id = ? AND pl.profile_id = p.id
+                LIMIT 1
+            ) AS is_like,
+            (
+                SELECT 1
+                FROM profile_wink pw2
+                WHERE pw2.user_id = ? AND pw2.profile_id = p.id
+                LIMIT 1
+            ) AS is_wink
+        FROM profiles p
+        LEFT JOIN media m ON m.id = p.profile_pic
+        JOIN profile_wink pw ON pw.user_id = p.user_id
+        WHERE pw.profile_id = ?
+        AND p.user_id != ?
+        ORDER BY pw.create_at DESC
+        LIMIT ? OFFSET ?
+        ";
+        
+        $params = [$user_id, $user_id, $current_profile_id, $user_id, (int)$limit, (int)$offset];
+        
+        $query = $this->db->query($sql, $params);
+        $base_upload_url = base_url();
+
+        foreach ($query->result() as $row) {
+            if ($row->profile_image) {
+                $row->profile_image = $base_upload_url . $row->profile_image;
+            }
+            $row->is_like = $row->is_like ? 1 : 0;
+            $row->is_wink = $row->is_wink ? 1 : 0;
+        }
+        return $query->result();
+    }
+
     public function get_winks_sent($user_id)
     {
         // Get winks sent by the user (profiles this user has winked at)

@@ -84,6 +84,7 @@ $route['api/countries']['GET'] = 'api/api/countries';
 $route['api/states']['GET'] = 'api/api/states';
 $route['api/cities']['GET'] = 'api/api/cities';
 $route['api/questions']['GET'] = 'api/api/questions';
+$route['api/new-question']['GET'] = 'api/api/new_question';
 $route['api/refferals']['GET'] = 'api/api/refferals';
 $route['api/body_types']['GET'] = 'api/api/body_types';
 $route['api/genders']['GET'] = 'api/api/genders';
