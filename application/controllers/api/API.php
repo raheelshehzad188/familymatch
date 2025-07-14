@@ -212,6 +212,86 @@ class Api extends API_Controller
                 'data' => $data
             ], REST_Controller::HTTP_OK);
     }
+
+    public function new_question_get()
+    {
+        $questions = [
+            [
+                "id" => 1,
+                "apiname" => "dob",
+                "question" => "When's your Birth date?",
+                "input_type" => "date",
+                "validation_type" => "birthday",
+                "description" => "Enter your date of birth",
+                "required" => true,
+                "signup_param" => "dob"
+            ],
+            [
+                "id" => 2,
+                "apiname" => "full_name",
+                "question" => "What's your name?",
+                "input_type" => "text",
+                "validation_type" => "name",
+                "description" => "Enter your full name",
+                "required" => true,
+                "signup_param" => "full_name"
+            ],
+            [
+                "id" => 3,
+                "apiname" => "email",
+                "question" => "What's your email?",
+                "input_type" => "email",
+                "validation_type" => "email1",
+                "description" => "Enter your email address",
+                "required" => true,
+                "signup_param" => "email"
+            ],
+            [
+                "id" => 4,
+                "apiname" => "password",
+                "question" => "Choose a password",
+                "input_type" => "password",
+                "validation_type" => "password",
+                "description" => "Select a strong password",
+                "required" => true,
+                "signup_param" => "password"
+            ],
+            [
+                "id" => 5,
+                "apiname" => "family_size",
+                "question" => "How many family members?",
+                "input_type" => "radio",
+                "options" => ["1", "2", "3", "4", "5+"],
+                "description" => "Include yourself too",
+                "required" => true,
+                "signup_param" => "family_size"
+            ],
+            [
+                "id" => 6,
+                "apiname" => "ethnicity",
+                "question" => "What is your family's ethnicity?",
+                "input_type" => "checkbox",
+                "options" => [
+                    "Asian",
+                    "Black / African descent",
+                    "Hispanic / Latino",
+                    "Middle Eastern",
+                    "White / Caucasian",
+                    "Mixed",
+                    "Prefer not to say",
+                    "Other"
+                ],
+                "description" => "Select all that apply",
+                "required" => false,
+                "signup_param" => "ethnicity"
+            ]
+        ];
+        
+        $this->response([
+            'status' => true,
+            'data' => $questions
+        ], REST_Controller::HTTP_OK);
+    }
     public function refferals_get()
     {
         $data = $this->Gernal_model->get_all_refferals();

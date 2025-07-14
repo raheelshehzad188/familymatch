@@ -9,6 +9,17 @@ class User extends Admin_Controller
     {
         parent::__construct();
         $this->load->model('admin/User_model');
+        
+        // For AJAX requests to get_users, don't redirect to login
+        $method = $this->router->fetch_method();
+        if ($method === 'get_users' && !isset($_SESSION['admin'])) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                "error" => "Authentication required",
+                "redirect" => base_url('admin/login')
+            ]);
+            exit;
+        }
     }
 
     public function edit($id)
@@ -45,6 +56,7 @@ class User extends Admin_Controller
         $data['js'] = $js;
         $this->admin('admin/user_list', $data);
     }
+    
     public function basic_info($user_id)
     {
         $user = $this->User_model->get_user_profile($user_id);
@@ -60,13 +72,11 @@ class User extends Admin_Controller
     public function survey($user_id)
     {
         $survey = $this->User_model->get_user_survey($user_id);
-
         $this->load->view('admin/tabs/survey', ['survey' => $survey]);
     }
 
     public function interst($user_id)
     {
-
         $profile_id = $this->User_model->get_profile_id_by_user($user_id);
 
         if (!$profile_id) {
@@ -80,7 +90,6 @@ class User extends Admin_Controller
 
     public function ethnicities($user_id)
     {
-
         $profile_id = $this->User_model->get_profile_id_by_user($user_id);
 
         if (!$profile_id) {
@@ -93,7 +102,6 @@ class User extends Admin_Controller
 
     public function core_values($user_id)
     {
-
         $profile_id = $this->User_model->get_profile_id_by_user($user_id);
 
         if (!$profile_id) {
@@ -103,6 +111,7 @@ class User extends Admin_Controller
         $data['interests'] = $this->User_model->get_profile_core_values($profile_id);
         $this->load->view('admin/tabs/ethnicities', $data);
     }
+    
     public function view($user_id)
     {
         $data = [];
@@ -115,27 +124,79 @@ class User extends Admin_Controller
 
         $this->admin('admin/user_profile_ajax_view', $data);
     }
+    
+    public function test_datatable()
+    {
+        $data = [];
+        $data['title'] = 'Test DataTable';
+        $js = [];
+        $js[] = 'https://cdn.datatables.net/2.3.0/js/dataTables.bootstrap.min.js';
+        $js[] = $this->assets_url.'js/user.js';
+        $data['js'] = $js;
+        $this->admin('admin/test_datatable', $data);
+    }
+    
+    public function test_db()
+    {
+        header('Content-Type: application/json');
+        
+        try {
+            // Test database connection
+            $this->db->simple_query('SELECT 1');
+            
+            // Check if users table exists
+            $tables = $this->db->list_tables();
+            $users_table_exists = in_array('users', $tables);
+            
+            // Get user count
+            $user_count = $this->db->count_all('users');
+            
+            echo json_encode([
+                "status" => "success",
+                "database_connected" => true,
+                "users_table_exists" => $users_table_exists,
+                "user_count" => $user_count,
+                "tables" => $tables
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                "status" => "error",
+                "message" => $e->getMessage()
+            ]);
+        }
+        exit;
+    }
+    
     public function get_users()
     {
+        // Set proper content type for JSON response
+        header('Content-Type: application/json');
+        
+        try {
+            // Get users from model
+            $users = $this->User_model->get_all_users();
+            $data = [];
 
-        //User_model
-        $users = $this->User_model->get_all_users();
-        $data = [];
+            foreach ($users as $user) {
+                $action = '<a href="'.$this->admin_url.'user/view/'.$user->id.'" class="btn btn-sm btn-primary">Profile</a> | <a href="'.$this->admin_url.'user/edit/'.$user->id.'" class="btn btn-sm btn-warning">Edit</a> | <a href="#" class="btn btn-sm btn-info">Children</a> | <a href="#" class="btn btn-sm btn-success">View</a> | <a href="#" class="btn btn-sm btn-danger">Block</a>';
+                $data[] = [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->phone,
+                    date('Y-m-d', strtotime($user->created_at)),
+                    $action
+                ];
+            }
 
-        foreach ($users as $user) {
-            $action = '<a href="'.$this->admin_url.'user/view/'.$user->id.'" class="btn">Profile</a>|<a href="'.$this->admin_url.'user/edit/'.$user->id.'" class="btn">Edit</a>|<a href="#" class="btn">Childerns</a>|<a href="#" class="btn">View</a>|<a href="#" class="btn">Block</a>';
-            $data[] = [
-                $user->id,
-                $user->name,
-                $user->email,
-                $user->phone,
-                date('Y-m-d', strtotime($user->created_at)),
-                $action
-            ];
+            echo json_encode([
+                "data" => $data
+            ]);
+        } catch (Exception $e) {
+            echo json_encode([
+                "error" => "Database error: " . $e->getMessage()
+            ]);
         }
-
-        echo json_encode([
-            "data" => $data
-        ]);
+        exit; // Ensure no additional output
     }
 }
