@@ -1,14 +1,26 @@
 <?php
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, X-API-KEY');
+// Prevent this file from being processed by CodeIgniter
+define('BYPASS_CI', true);
+
+// Comprehensive CORS headers - must be sent before any output
+if (isset($_SERVER['HTTP_ORIGIN'])) {
+    header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+} else {
+    header("Access-Control-Allow-Origin: *");
+}
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Max-Age: 86400'); // 24 hours cache for preflight
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS, PATCH');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-API-KEY, Accept, Origin');
     http_response_code(200);
     exit();
 }
+
+// Set content type
+header('Content-Type: application/json; charset=utf-8');
 
 // Check API key
 $api_key = $_SERVER['HTTP_X_API_KEY'] ?? '';
