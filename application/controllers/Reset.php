@@ -8,39 +8,39 @@ class Reset extends CI_Controller
     {
         $msg = null;
         $msg_type = null;
-        $token = $this->input->get('token');
+        $token = trim($this->input->get('token'));
+$token = preg_replace('/\s+/', '', $token);
         if ($this->input->method() === 'post') {
             $new_password = $this->input->post('new_password');
             $confirm_password = $this->input->post('confirm_password');
             $token = $this->input->post('token');
+            $token = preg_replace('/\s+/', '', $token);
 
-            // Call the API endpoint internally
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, base_url('api/profile/reset_password'));
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
-                'token' => $token,
-                'new_password' => $new_password,
-                'confirm_password' => $confirm_password
-            ]));
-            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json']);
-            $response = curl_exec($ch);
-            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-
-            $result = json_decode($response, true);
-            if ($http_code === 200 && isset($result['status']) && $result['status']) {
-                $msg = 'Password reset successfully. You can now log in with your new password.';
-                $msg_type = 'success';
-            } else {
-                $msg = isset($result['message']) ? $result['message'] : 'Failed to reset password.';
+            if (!$token || !$new_password || !$confirm_password) {
+                $msg = 'All fields are required.';
                 $msg_type = 'error';
+            } elseif ($new_password !== $confirm_password) {
+                $msg = 'Passwords do not match.';
+                $msg_type = 'error';
+            } else {
+                $this->load->model('user/User_model');
+                $user = $this->User_model->get_user_by_token($token);
+                if (!$user) {
+                    $msg = 'Invalid or expired token.';
+                    $msg_type = 'error';
+                } else {
+                    $hashed = password_hash($new_password, PASSWORD_DEFAULT);
+                    $this->db->where('id', $user->id)->update('users', ['password' => $hashed]);
+                    $this->User_model->clear_reset_token($user->id);
+                    $msg = 'Password reset successfully. You can now log in with your new password.';
+                    $msg_type = 'success';
+                }
             }
         }
         $this->load->view('reset_password', [
             'msg' => $msg,
-            'msg_type' => $msg_type
+            'msg_type' => $msg_type,
+            'token' => $token // <-- yeh zaroor pass karen
         ]);
     }
 } 

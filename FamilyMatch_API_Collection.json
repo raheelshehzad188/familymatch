@@ -1,0 +1,287 @@
+{
+	"info": {
+		"_postman_id": "family-match-api-collection",
+		"name": "FamilyMatch API Collection",
+		"description": "Complete API collection for FamilyMatch application including Message and Notifications APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Message APIs",
+			"item": [
+				{
+					"name": "Send Message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"message\": \"Hello, how are you?\",\n    \"sender_id\": 5,\n    \"receiver_id\": 10,\n    \"msg_type\": \"txt\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/message/send_msg",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"message",
+								"send_msg"
+							]
+						},
+						"description": "Send a message to another user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chat",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/message/chat?login_id=5&user_id=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"message",
+								"chat"
+							],
+							"query": [
+								{
+									"key": "login_id",
+									"value": "5"
+								},
+								{
+									"key": "user_id",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get all messages between two users"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Conversations List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/message/conversations_list?login_id=5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"message",
+								"conversations_list"
+							],
+							"query": [
+								{
+									"key": "login_id",
+									"value": "5"
+								}
+							]
+						},
+						"description": "Get list of all users with whom login user has had conversations"
+					},
+					"response": []
+				}
+			],
+			"description": "All Message related APIs"
+		},
+		{
+			"name": "Notifications APIs",
+			"item": [
+				{
+					"name": "Add Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 10,\n    \"from_user_id\": 5,\n    \"type\": \"wink\",\n    \"title\": \"New Wink\",\n    \"message\": \"Ali Khan winked at you!\",\n    \"reference_id\": 123\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notifications/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"add"
+							]
+						},
+						"description": "Add a new notification"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notifications List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/list?user_id=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"list"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get all notifications for a user"
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Notification as Read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "notification_id",
+									"value": "5"
+								},
+								{
+									"key": "user_id",
+									"value": "10"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notifications/mark_read",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"mark_read"
+							]
+						},
+						"description": "Mark a specific notification as read"
+					},
+					"response": []
+				},
+				{
+					"name": "Mark All Notifications as Read",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user_id",
+									"value": "10"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notifications/mark_all_read",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"mark_all_read"
+							]
+						},
+						"description": "Mark all notifications as read for a user"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Unread Count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notifications/unread_count?user_id=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"notifications",
+								"unread_count"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Get count of unread notifications for a user"
+					},
+					"response": []
+				}
+			],
+			"description": "All Notifications related APIs"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost/familymatch",
+			"type": "string"
+		}
+	]
+} 

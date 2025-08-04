@@ -1,27 +1,54 @@
-# Enable CORS for all requests
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /familymatch/
+
+    # Remove index.php from URLs
+    RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s/+familymatch/+index\.php/([^\s\?]*) [NC]
+    RewriteRule ^ /familymatch/%1 [R=301,L]
+
+    # Handle requests without index.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
+
+# CORS Headers
 <IfModule mod_headers.c>
-    # Set CORS headers for all origins
     Header always set Access-Control-Allow-Origin "*"
-    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS, PATCH"
-    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-API-KEY, Accept, Origin"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, X-API-KEY, Accept, Referer"
     Header always set Access-Control-Allow-Credentials "true"
-    Header always set Access-Control-Max-Age "86400"
     
-    # Handle preflight OPTIONS requests
+    # Handle preflight requests
     RewriteEngine On
     RewriteCond %{REQUEST_METHOD} OPTIONS
     RewriteRule ^(.*)$ $1 [R=200,L]
 </IfModule>
 
-# CodeIgniter routing
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /
-
-    # Skip API directory from CodeIgniter routing
-    RewriteCond %{REQUEST_URI} !^/api/
-    
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php/$1 [L]
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
 </IfModule>
+
+# Prevent access to sensitive files
+<Files "*.log">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.json">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.lock">
+    Order allow,deny
+    Deny from all
+</Files>

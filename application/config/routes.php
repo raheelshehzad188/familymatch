@@ -50,12 +50,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
 | Examples:	my-controller/index	-> my_controller/index
 |		my-controller/my-method	-> my_controller/my_method
 */
+$route['verify-email'] = 'api/signup/verify_email';
 $route['default_controller'] = 'welcome';
 $route['signup'] = 'user/signup';
 $route['admin'] = 'admin/dashboard';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = false;
 //APIs routes
+$route['api/send_msg']['POST'] = 'api/message/send_msg';
 $route['api/signup']['POST'] = 'api/signup/register';
 $route['api/login']['POST'] = 'api/login/login';
 $route['api/email']['POST'] = 'api/api/email';
@@ -71,6 +73,7 @@ $route['api/wink-profile']['POST'] = 'api/Profile/wink_profile';
 $route['api/childern/add']['POST'] = 'api/Childern/add';
 $route['api/delete-childern/(:any)']['GET'] = 'api/Childern/del_child/$1';
 $route['api/user-profile/(:any)'] = 'api/Profile/user_profile/$1';
+$route['api/user-by-slug/(:any)'] = 'api/Profile/user_by_slug/$1';
 $route['api/user-about/(:any)'] = 'api/Profile/user_about/$1';
 
 $route['api/likes']['GET'] = 'api/Profile/likes';
@@ -81,8 +84,8 @@ $route['api/results']['GET'] = 'api/api/results';
 $route['api/results-login']['GET'] = 'api/Profile/results_login';
 $route['api/user-matches/(:any)']['GET'] = 'api/Profile/user_matches/$1';
 $route['api/countries']['GET'] = 'api/api/countries';
-$route['api/states']['GET'] = 'api/api/states';
-$route['api/cities']['GET'] = 'api/api/cities';
+$route['api/states/(:any)']['GET'] = 'api/api/states/$1'; 
+$route['api/cities/(:any)']['GET'] = 'api/api/cities/$1';
 $route['api/questions']['GET'] = 'api/api/questions';
 $route['api/new-question']['GET'] = 'api/api/new_question';
 $route['api/refferals']['GET'] = 'api/api/refferals';
@@ -98,3 +101,29 @@ $route['api/favorites']['GET'] = 'api/Profile/favorites';
 $route['api/profile/change_password']['post'] = 'api/profile/change_password';
 $route['api/profile/forgot_password']['post'] = 'api/profile/forgot_password';
 $route['api/profile/reset_password']['post'] = 'api/profile/reset_password';
+// Add this route for email verification
+$route['api/profile-data']['GET'] = 'api/Profile/profile_data';
+
+// Message APIs
+$route['api/message/send_msg']['POST'] = 'api/message/send_msg';
+$route['api/message/chat']['GET'] = 'api/message/chat';
+$route['api/message/conversations_list']['GET'] = 'api/message/conversations_list';
+
+// Notifications APIs
+$route['api/notifications/add']['POST'] = 'api/notifications/add';
+$route['api/notifications/list']['GET'] = 'api/notifications/list';
+$route['api/notifications/mark_read']['POST'] = 'api/notifications/mark_read';
+$route['api/notifications/mark_all_read']['POST'] = 'api/notifications/mark_all_read';
+$route['api/notifications/unread_count']['GET'] = 'api/notifications/unread_count';
+
+// Invitations APIs
+$route['api/invitations/send']['POST'] = 'api/invitations/send';
+$route['api/invitations/respond']['POST'] = 'api/invitations/respond';
+$route['api/invitations/list']['GET'] = 'api/invitations/list';
+$route['api/invitations/friend_request']['POST'] = 'api/invitations/friend_request';
+$route['api/invitations/friends']['GET'] = 'api/invitations/friends';
+$route['api/invitations/check_friendship']['GET'] = 'api/invitations/check_friendship';
+$route['api/invitations/received_count']['GET'] = 'api/invitations/received_count';
+$route['api/invitations/received_list']['GET'] = 'api/invitations/received_list';
+$route['api/invitations/test']['GET'] = 'api/invitations/test';
+

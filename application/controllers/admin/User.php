@@ -178,11 +178,13 @@ class User extends Admin_Controller
             $data = [];
 
             foreach ($users as $user) {
-                $action = '<a href="'.$this->admin_url.'user/view/'.$user->id.'" class="btn btn-sm btn-primary">Profile</a> | <a href="'.$this->admin_url.'user/edit/'.$user->id.'" class="btn btn-sm btn-warning">Edit</a> | <a href="#" class="btn btn-sm btn-info">Children</a> | <a href="#" class="btn btn-sm btn-success">View</a> | <a href="#" class="btn btn-sm btn-danger">Block</a>';
+                $action = '<a href="'.$this->admin_url.'user/view/'.$user->id.'" class="btn btn-sm btn-primary">Profile</a> | <a href="'.$this->admin_url.'user/edit/'.$user->id.'" class="btn btn-sm btn-warning">Edit</a> | <button class="btn btn-sm btn-danger btn-delete-user" data-id="'.$user->id.'">Delete</button>';
+                $verified_badge = $user->is_verified ? '<span class="badge bg-success">Verified</span>' : '<span class="badge bg-danger">Not Verified</span>';
                 $data[] = [
                     $user->id,
                     $user->name,
                     $user->email,
+                    $verified_badge,
                     $user->phone,
                     date('Y-m-d', strtotime($user->created_at)),
                     $action
@@ -198,5 +200,53 @@ class User extends Admin_Controller
             ]);
         }
         exit; // Ensure no additional output
+    }
+
+    // Delete a user and all related data
+    public function delete_user($user_id)
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            show_error('Invalid request method', 405);
+            return;
+        }
+        $this->load->model('admin/User_model');
+        $this->load->database();
+        $success = true;
+        $msg = '';
+        try {
+            // Get profile id
+            $profile_id = $this->User_model->get_profile_id_by_user($user_id);
+            // Delete profile interests
+            if ($profile_id) {
+                $this->db->where('profile_id', $profile_id)->delete('profile_intersts');
+                $this->db->where('profile_id', $profile_id)->delete('profile_ethnic');
+                $this->db->where('profile_id', $profile_id)->delete('profile_cvalues');
+            }
+            // Delete survey responses
+            $this->db->where('user_id', $user_id)->delete('responses');
+            // Delete user images from media table and filesystem
+            $images = $this->User_model->get_user_images($user_id);
+            foreach ($images as $img) {
+                if (!empty($img->thumb_path) && file_exists(FCPATH . $img->thumb_path)) {
+                    @unlink(FCPATH . $img->thumb_path);
+                }
+                if (!empty($img->file_path) && file_exists(FCPATH . $img->file_path)) {
+                    @unlink(FCPATH . $img->file_path);
+                }
+            }
+            $this->db->where('user_id', $user_id)->delete('media');
+            // Delete profile
+            $this->db->where('user_id', $user_id)->delete('profiles');
+            // Delete user
+            $this->db->where('id', $user_id)->delete('users');
+            $msg = 'User and all related data deleted successfully.';
+        } catch (Exception $e) {
+            $success = false;
+            $msg = 'Error: ' . $e->getMessage();
+        }
+        $this->output->set_content_type('application/json')->set_output(json_encode([
+            'success' => $success,
+            'message' => $msg
+        ]));
     }
 }

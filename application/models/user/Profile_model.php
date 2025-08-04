@@ -113,6 +113,12 @@ class Profile_model extends CI_Model
         if (isset($data['gender'])) {
             $up['gender'] = $data['gender'];
         }
+        if (isset($data['whatsapp'])) {
+            $up['whatsapp'] = $data['whatsapp'];
+        }
+        if (isset($data['whatsapp_contact'])) {
+            $up['whatsapp_contact'] = $data['whatsapp_contact'];
+        }
         if (isset($data['religion_id'])) {
             $up['religion_id'] = $data['religion_id'];
         }

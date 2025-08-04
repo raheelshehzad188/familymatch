@@ -1,0 +1,11 @@
+TRUNCATE `users`;
+TRUNCATE `user_to_childern`;
+TRUNCATE `profiles`;
+TRUNCATE `profile_cvalues`;
+TRUNCATE `profile_ethnic`;
+TRUNCATE `profile_favorite`;
+TRUNCATE `profile_ignore`;
+TRUNCATE `profile_intersts`;
+TRUNCATE `profile_like`;
+TRUNCATE `profile_wink`;
+TRUNCATE `media`;

@@ -13,25 +13,27 @@
                             <div class="card-body">
                                 <table id="datatablesSimple">
                                     <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
-                                            <th>Start date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
-                                            <th>Start date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Email Verified OKK</th>
+        <th>Phone</th>
+        <th>Start date</th>
+        <th>Action</th>
+    </tr>
+</thead>
+<tfoot>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Email Verified</th>
+        <th>Phone</th>
+        <th>Start date</th>
+        <th>Action</th>
+    </tr>
+</tfoot>
                                     <tbody></tbody>
                                 </table>
                             </div>

@@ -15,7 +15,7 @@ class Api extends API_Controller
         $co = $this->Gernal_model->get_countries();
         $this->response([
                 'status' => true,
-                'data' => $co
+                'data' => $con
             ], REST_Controller::HTTP_OK);
     }
     public function genders_get()
@@ -30,7 +30,7 @@ class Api extends API_Controller
     public function profile_options_get()
     {
         $all = $this->Gernal_model->get_all_data('profile_fields');
-        $A = [];
+        $a = [];
         foreach ($all as $k => $v) {
             $all[$k]['options'] = $this->Gernal_model->get_all_data($v['tbl']);
             if (!isset($a[$v['akey']])) {
@@ -145,9 +145,9 @@ class Api extends API_Controller
                 'data' => $co
             ], REST_Controller::HTTP_OK);
     }
-    public function states_get()
+    public function states_get($cid = 0)
     {
-        $d = $_GET;
+        $d = $cid;
         $co = $this->Gernal_model->get_states($d);
         $this->response([
                 'status' => true,
@@ -194,9 +194,9 @@ class Api extends API_Controller
         return true;
     }
 
-    public function cities_get()
+    public function cities_get($sid = 0)
     {
-        $d = $_GET;
+        $d =$sid;
         $co = $this->Gernal_model->get_cities($d);
         $this->response([
                 'status' => true,
@@ -215,77 +215,73 @@ class Api extends API_Controller
 
     public function new_question_get()
     {
+        $signup_questions = $this->Gernal_model->get_all_data('signup_questions');
+        $quest = $this->Gernal_model->get_all_questions_with_options();
+        
         $questions = [
-            [
-                "id" => 1,
-                "apiname" => "dob",
-                "question" => "When's your Birth date?",
-                "input_type" => "date",
-                "validation_type" => "birthday",
-                "description" => "Enter your date of birth",
-                "required" => true,
-                "signup_param" => "dob"
-            ],
-            [
-                "id" => 2,
-                "apiname" => "full_name",
-                "question" => "What's your name?",
-                "input_type" => "text",
-                "validation_type" => "name",
-                "description" => "Enter your full name",
-                "required" => true,
-                "signup_param" => "full_name"
-            ],
-            [
-                "id" => 3,
-                "apiname" => "email",
-                "question" => "What's your email?",
-                "input_type" => "email",
-                "validation_type" => "email1",
-                "description" => "Enter your email address",
-                "required" => true,
-                "signup_param" => "email"
-            ],
-            [
-                "id" => 4,
-                "apiname" => "password",
-                "question" => "Choose a password",
-                "input_type" => "password",
-                "validation_type" => "password",
-                "description" => "Select a strong password",
-                "required" => true,
-                "signup_param" => "password"
-            ],
-            [
-                "id" => 5,
-                "apiname" => "family_size",
-                "question" => "How many family members?",
-                "input_type" => "radio",
-                "options" => ["1", "2", "3", "4", "5+"],
-                "description" => "Include yourself too",
-                "required" => true,
-                "signup_param" => "family_size"
-            ],
-            [
-                "id" => 6,
-                "apiname" => "ethnicity",
-                "question" => "What is your family's ethnicity?",
-                "input_type" => "checkbox",
-                "options" => [
-                    "Asian",
-                    "Black / African descent",
-                    "Hispanic / Latino",
-                    "Middle Eastern",
-                    "White / Caucasian",
-                    "Mixed",
-                    "Prefer not to say",
-                    "Other"
-                ],
-                "description" => "Select all that apply",
-                "required" => false,
-                "signup_param" => "ethnicity"
-            ]
-        ];
+        ["id" => 5, "apiname" => "family_nickname", "question" => "What's a special name or nickname for your family?", "input" => "text", "description" => "Something that represents your family vibe."],
+        // ["id" => 6, "apiname" => "home_location", "question" => "Where does your family call home?", "input" => "dropdown-text", "description" => "Type or select your location"],
+    ];
+    foreach($questions as $k=> $v)
+    {
+        $signup_questions[] = $v;
+    }
+    $questions = $signup_questions;
+    
+    $interests = $this->Gernal_model->get_all_data('interests');
+    foreach ($interests as $key => $value) {
+            $interests[$key]['image'] = base_url('uploads/interests/'.$interests[$key]['image']);
+        }
+        $interest_reason = $interests;
+    $in = array();
+    foreach($interest_reason as $k=> $v)
+    {
+        $v['name'] = $v['title'];
+        unset($v['title']);
+        $in[] = $v;
+    }
+    $interest_reason = $in;
+    $family_size = $this->Gernal_model->get_all_data('family_size');
+    $life_stages = $this->Gernal_model->get_all_data('life_stages');
+    $family_status = $this->Gernal_model->get_all_data('family_status');
+    
+    $questions[] = ["id" => 7, "apiname" => "interests", "question" => "Why are you interested in Family Match?", "input" => "interests", "options" => $interest_reason];
+    $questions[] = ["id" => 8, "apiname" => "family_size", "question" => "How many family members make up your family?", "input" => "radio", "options" => $family_size, "description" => "Include yourself too"];
+    foreach($quest['questions'] as $k=> $v)
+    {
+        $o = isset($quest['options'][$k])?$quest['options'][$k]:array();
+        $op = array();
+        foreach($o as $ok=> $ov)
+        {
+            $op[] = array('id'=>$ov['id'],'name'=>$ov['option_text']);
+        }
+        $sing = ["id" => $v['id'].'_survey', "apiname" => "survey_".$v['id'], "question" => $v['question'], "input" => "radio", "options" => $op];
+        $questions[] = $sing;
+    }
+    $marital_status = $this->Gernal_model->get_all_data('marital_status');
+    $questions[] = ["id" => 9, "apiname" => "marital_status", "question" => "Which of the following best describes your family's current life stage?", "input" => "radio", "options" => $life_stages];
+    $questions[] = ["id" => 10, "apiname" => "family_status", "question" => "What's your family status?", "input" => "radio", "options" => $family_status];
+    $core_values = $this->Gernal_model->get_all_data('core_values');
+        foreach ($core_values as $key => $value) {
+            $core_values[$key]['image'] = base_url($core_values[$key]['img']);
+            unset($core_values[$key]['img']);
+        }
+    $questions[] = ["id" => 11, "apiname" => "cvalues", "question" => "What values are at the heart of your family?", "input" => "core_value", "options" => $core_values];
+    $ethnicities = $this->Gernal_model->get_all_data('ethnicities');
+    $questions[] = ["id" => 12, "apiname" => "ethnic", "question" => "What is your family's ethnicity?", "input" => "interests", "options" => $ethnicities];
+    $questions[] = ["id" => 13, "apiname" => "languages_spoken", "question" => "What languages do you speak at home or with friends?", "input" => "checkbox", "options" => ["English","Urdu","Arabic","Punjabi","Spanish","French","Others"]];
+    $questions[] = ["id" => 14, "apiname" => "family_activities", "question" => "What activities does your family love doing together?", "input" => "checkbox", "options" => ["Cooking","Sports","Board games","Traveling","Watching movies","Outdoor adventures","Other"]];
+    $questions[] = ["id" => 15, "apiname" => "activities_with_others", "question" => "What activities would your family enjoy doing with other families?", "input" => "checkbox", "options" => ["Picnics","Cultural events","Playdates","Volunteering","Game nights","Group travel","Other"]];
+    $questions[] = ["id" => 17, "apiname" => "family_story", "question" => "What's a little something about your family's story or traditions?", "input" => "textarea"];
+    $questions[] = ["id" => 18, "apiname" => "family_photo", "question" => "Would you like to share a photo or fun avatar?", "input" => "image"];
+    $i = 0;
+    foreach($questions as $k=> $v)
+    {
+        $i++;
+        $v['id'] = $i;
+        $questions[$k] = $v;
+        
+    }
         
         $this->response([
             'status' => true,
@@ -339,6 +335,22 @@ class Api extends API_Controller
         ], REST_Controller::HTTP_OK);
     }
 
+    public function verify_email_get() {
+        $token = $this->input->get('token');
+        if (!$token) {
+            // Show error
+        }
+        $user = $this->db->where('email_verification_token', $token)->get('users')->row();
+        if ($user) {
+            $this->db->where('id', $user->id)->update('users', [
+                'email_verified' => 1,
+                'email_verification_token' => null
+            ]);
+            // Show success message
+        } else {
+            // Show invalid token message
+        }
+    }
 
 
 }

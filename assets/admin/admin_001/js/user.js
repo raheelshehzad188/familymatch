@@ -34,16 +34,41 @@
                     { "data": 0, "title": "ID" },
                     { "data": 1, "title": "Name" },
                     { "data": 2, "title": "Email" },
-                    { "data": 3, "title": "Phone" },
-                    { "data": 4, "title": "Created Date" },
-                    { "data": 5, "title": "Actions" }
+                    { "data": 3, "title": "Email Verified" },
+                    { "data": 4, "title": "Phone" },
+                    { "data": 5, "title": "Created Date" },
+                    { "data": 6, "title": "Actions" }
                 ],
                 "order": [], // no initial sort
                 "columnDefs": [
-                    { "orderable": false, "targets": 5 } // Actions column is not sortable
+                    { "orderable": false, "targets": 6 } // Actions column is not sortable
                 ],
                 "processing": true,
                 "serverSide": false,
                 "responsive": true
             });
         });
+$(document).on('click', '.btn-delete-user', function(e) {
+    e.preventDefault();
+    var btn = $(this);
+    var userId = btn.data('id');
+    if (!confirm('Are you sure you want to delete this user and all related data?')) return;
+    $.ajax({
+        url: BASE_URL + 'admin/user/delete_user/' + userId,
+        type: 'POST',
+        dataType: 'json',
+        success: function(res) {
+            if (res.success) {
+                // Remove row from DataTable
+                var table = $('#datatablesSimple').DataTable();
+                table.row(btn.parents('tr')).remove().draw();
+                alert('User deleted successfully.');
+            } else {
+                alert('Delete failed: ' + res.message);
+            }
+        },
+        error: function(xhr) {
+            alert('Delete failed.');
+        }
+    });
+});

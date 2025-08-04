@@ -10,12 +10,13 @@ class User_model extends CI_Model
     }
 
     // Insert data into the users table
-    public function insert_user($username, $email, $password)
+    public function insert_user($username, $email, $password, $verification_code)
     {
         $data = [
             'name' => $username,
             'email' => $email,
-            'password' => $password
+            'password' => $password,
+            'verification_code' => $verification_code
         ];
 
         // Insert into users table

@@ -32,6 +32,12 @@ class Login extends API_Controller
             return;
         }
 
+        // Check if email is verified
+        if (empty($user->is_verified) || $user->is_verified != 1) {
+            $this->response(['status' => false, 'message' => 'Email not verified. Please verify your email before logging in.'], REST_Controller::HTTP_FORBIDDEN);
+            return;
+        }
+
         // Verify password
         if (!password_verify($password, $user->password)) {
             $this->response(['status' => false, 'message' => 'Invalid credentials.'], REST_Controller::HTTP_UNAUTHORIZED);

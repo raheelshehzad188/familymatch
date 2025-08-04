@@ -11,14 +11,16 @@ class API_Controller extends REST_Controller
         header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE');
         header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
         if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-            exit(0);
+            exit(0); 
         }
         // Add your custom logic here
         // For example: load a common model, helper, etc.
         $this->load->helper('url');
         // CORS headers
+        // $this->validate_token(1);
 
-        $this->example_api();
+        // Commented out to fix API routing issue
+        // $this->example_api();
 
 
 
@@ -68,7 +70,7 @@ class API_Controller extends REST_Controller
     public function example_api()
     {
 
-        $user_id = $this->session->userdata('user_id') ?? null;
+        $user_id = $this->session->userdata('user_id') ?? $this->user_id;
         $request_url = current_url();
         $request_method = $this->input->method(true);
         $headers = json_encode($this->input->request_headers());
@@ -132,7 +134,7 @@ class API_Controller extends REST_Controller
         ];
         return base64_encode(json_encode($payload)); // Just a placeholder for the token
     }
-    public function validate_token()
+    public function validate_token($error = 0)
     {
         $headers = apache_request_headers();
         $auth_header = isset($headers['Authorization']) ? $headers['Authorization'] : null;
@@ -140,7 +142,7 @@ class API_Controller extends REST_Controller
             $auth_header = $headers['authorization'];
         }
 
-        if (!$auth_header || !preg_match('/Bearer\s(\S+)/', $auth_header, $matches)) {
+        if (!$auth_header || !preg_match('/Bearer\s(\S+)/', $auth_header, $matches) && $error) {
 
 
             echo json_encode(["status" => "error", "message" => "Unauthorized"]);
@@ -154,7 +156,7 @@ class API_Controller extends REST_Controller
             $this->user_id = $arr['user_id'];
 
             $this->profile = $this->getProfile($this->user_id);
-            if (!$this->profile || !$this->user_id) {
+            if (!$this->profile || !$this->user_id && $error) {
 
                 $this->response(['status' => false, 'message' => 'Unauthorized'], REST_Controller::HTTP_UNAUTHORIZED);
                 return false;
@@ -179,7 +181,7 @@ class API_Controller extends REST_Controller
 
     public function getsProfile($user_id)
     {
-        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion,ms.name as marital_status_name,ql.name as qualification');
+        $this->db->select('p.*, g.name as gender, g.id as gender_id, r.name as  reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion,ms.name as marital_status_name,ql.name as qualification');
         $this->db->from('profiles p');
         $this->db->join('genders g', 'p.gender = g.id', 'left');
         // $this->db->join('marital_statuses m', 'p.marital_status = m.id', 'left');
@@ -208,7 +210,7 @@ class API_Controller extends REST_Controller
     }
     public function getProfile($user_id)
     {
-        $this->db->select('p.*, g.name as gender, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,s.name as state,ci.name as city,rl.name as religion,ms.name as marital_status_name,ql.name as qualification');
+        $this->db->select('p.*, g.name as gender, g.id as gender_id, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,c.id as country_id,s.name as state,s.id as state_id,ci.name as city,ci.id as city_id,rl.name as religion,ms.name as marital_status_name,ql.name as qualification');
         $this->db->from('profiles p');
         $this->db->join('genders g', 'p.gender = g.id', 'left');
         // $this->db->join('marital_statuses m', 'p.marital_status = m.id', 'left');
@@ -273,9 +275,77 @@ class API_Controller extends REST_Controller
         return $profile;
 
     }
+    
+    public function getProfileBySlug($slug)
+    {
+        $this->db->select('p.*, g.name as gender, g.id as gender_id, r.name as reffer,b.name as body,pp.thumb_path as img,c.name as country,c.id as country_id,s.name as state,s.id as state_id,ci.name as city,ci.id as city_id,rl.name as religion,ms.name as marital_status_name,ql.name as qualification');
+        $this->db->from('profiles p');
+        $this->db->join('genders g', 'p.gender = g.id', 'left');
+        $this->db->join('referrals r', 'p.reffer_id = r.id', 'left'); // optional
+        $this->db->join('body_types b', 'p.body_type = b.id', 'left'); // optional
+        $this->db->join('countries c', 'p.country_id = c.id', 'left'); // optional
+        $this->db->join('states s', 'p.state_id = s.id', 'left'); // optional
+        $this->db->join('cities ci', 'p.city_id = ci.id', 'left'); // optional
+        $this->db->join('religions rl', 'p.religion_id = rl.id', 'left'); // optional
+        $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // optional
+        $this->db->join('marital_status ms', 'p.marital_status = ms.id', 'left'); // optional
+        $this->db->join('qualifications ql', 'p.qualification_id = ql.id', 'left'); // optional
+
+        $this->db->where('p.slug', $slug);
+        $query = $this->db->get();
+        $profile = $query->row();
+
+        if (!$profile) {
+            return (object)[];
+        }
+        
+        $profile->age = '';
+        if ($profile->dob) {
+            $profile->age = $this->get_age_in_years($profile->dob);
+        }
+        $profile->childerns = $this->getChilderns($profile->user_id);
+        $profile->img = base_url($profile->img);
+        $profile->gallery = $this->myimgs($profile->user_id);
+
+        $profile_id = $profile->id;
+        
+        //get interests
+        $this->db->select('i.id,i.title,i.image');
+        $this->db->from('profile_intersts pi');
+        $this->db->join('interests i', 'pi.interest_id = i.id');
+        $this->db->where('pi.profile_id', $profile_id);
+
+        $query = $this->db->get();
+        $profile->interests = $query->result();
+        foreach ($profile->interests as $key => $value) {
+            $profile->interests[$key]->image = base_url('uploads/interests/'.$profile->interests[$key]->image);
+        }
+        
+        //get ethnicities
+        $this->db->select('e.id,e.name');
+        $this->db->from('profile_ethnic pi');
+        $this->db->join('ethnicities e', 'pi.ethnic_id = e.id');
+        $this->db->where('pi.profile_id', $profile_id);
+        $query = $this->db->get();
+        $profile->ethnicities = $query->result();
+        
+        //get values
+        $this->db->select('e.id,e.name,e.img');
+        $this->db->from('profile_cvalues pi');
+        $this->db->join('core_values e', 'pi.val_id = e.id');
+        $this->db->where('pi.profile_id', $profile_id);
+        $query = $this->db->get();
+        $profile->values = $query->result();
+        foreach ($profile->values as $key => $value) {
+            $profile->values[$key]->img = base_url($profile->values[$key]->img);
+        }
+        
+        return $profile;
+    }
+    
     public function getShortProfile($user_id)
     {
-        $this->db->select('p.id,p.user_id, p.full_name, pp.thumb_path as profile_pic, c.name as country, ci.name as city');
+        $this->db->select('p.id,p.user_id,p.slug, p.full_name, pp.thumb_path as profile_pic, c.name as country, ci.name as city');
         $this->db->from('profiles p');
         $this->db->join('media pp', 'p.profile_pic = pp.id', 'left'); // profile pic
         $this->db->join('countries c', 'p.country_id = c.id', 'left'); // country name

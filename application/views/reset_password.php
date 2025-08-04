@@ -23,7 +23,7 @@
     <?php if (isset($msg)) { ?>
         <div class="msg <?php echo $msg_type; ?>"> <?php echo $msg; ?> </div>
     <?php } ?>
-    <form method="post" action="<?php echo base_url('api/profile/reset_password'); ?>">
+    <form method="post" action="<?php echo base_url().'index.php/reset'; ?>">
         <div class="form-group">
             <label for="new_password">New Password</label>
             <input type="password" id="new_password" name="new_password" required>
@@ -32,7 +32,7 @@
             <label for="confirm_password">Confirm Password</label>
             <input type="password" id="confirm_password" name="confirm_password" required>
         </div>
-        <input type="hidden" name="token" value="<?php echo htmlspecialchars($_GET['token'] ?? ''); ?>">
+        <input type="hidden" name="token" value="<?php echo htmlspecialchars($token ?? ''); ?>">
         <button type="submit">Reset Password</button>
     </form>
 </div>

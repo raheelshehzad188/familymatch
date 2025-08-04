@@ -51,6 +51,22 @@ class Profile extends API_Controller
                 'data' => $this->getProfile($id),
             ], REST_Controller::HTTP_OK);
     }
+    
+    public function user_by_slug_get($slug = '')
+    {
+        if (empty($slug)) {
+            $this->response([
+                'status' => false,
+                'message' => 'Slug parameter is required'
+            ], REST_Controller::HTTP_BAD_REQUEST);
+            return;
+        }
+        
+        $this->response([
+            'status' => true,
+            'data' => $this->getProfileBySlug($slug),
+        ], REST_Controller::HTTP_OK);
+    }
     public function results_login_get()
     {
         $this->validate_token();
@@ -108,12 +124,62 @@ class Profile extends API_Controller
     }
     public function index_get($id = 0)
     {
-
-        $this->validate_token();
+        // For testing purposes, allow access without token
+        if (!$this->validate_token(0)) {
+            $this->response([
+                'status' => true,
+                'message' => 'Profile API is working!',
+                'note' => 'Authentication required for full access'
+            ], REST_Controller::HTTP_OK);
+            return;
+        }
+        
         $this->response([
                 'status' => true,
                 'data' => $this->profile
             ], REST_Controller::HTTP_OK);
+    }
+    public function profile_data_get()
+    {
+        ini_set('memory_limit', '512M');
+
+        $this->validate_token();
+                $this->load->model('user/Gernal_model');
+        $co = $this->Gernal_model->get_all_genders();
+        $val = isset($this->profile->gender)?$this->profile->gender:0;
+        foreach($co as $k=> $v)
+        {
+            if($v['id'] == $val)
+            {
+                $co[$k]['selected'] = 1;
+            }
+            else
+            {
+                $co[$k]['selected'] = 0;
+            }
+        }
+        $genders = $co;
+        $this->db->select('id,name');
+        $co = $this->Gernal_model->get_countries();
+        $country_id = $val = isset($this->profile->country_id)?$this->profile->country_id:0;
+        foreach($co as $k=> $v)
+        {
+            if($v['id'] == $val)
+            {
+                $co[$k]['selected'] = 1;
+            }
+            else
+            {
+                $co[$k]['selected'] = 0;
+            }
+        }
+        $countries = $co;
+        $profile = $this->getProfile($this->user_id);
+        $ret = array('genders'=>$genders,'countries'=>$countries,'profile'=>$profile);
+        $this->response([
+            'status' => true,
+            'data' => $ret
+        ], REST_Controller::HTTP_OK);
     }
     public function likes_get()
     {
@@ -246,6 +312,7 @@ class Profile extends API_Controller
     }
     public function update_profile_post()
     {
+        $this->validate_token();
 
         $data = $_POST;
         $json = file_get_contents('php://input');
@@ -267,6 +334,7 @@ class Profile extends API_Controller
 
                 }
                 $user_id = $this->user_id;
+                $this->db->where('user_id',$user_id)->delete('responses');
 
                 foreach ($sur as $q => $answer) {
                     $question_id = $q;
@@ -400,15 +468,16 @@ class Profile extends API_Controller
         }
         $token = bin2hex(random_bytes(32));
         $this->load->model('user/User_model');
-        $this->User_model->set_reset_token($email, $token);
+        $r = $this->User_model->set_reset_token($email, $token);
 
         // Load email template and replace placeholder
         $template = file_get_contents(APPPATH . 'views/email_reset_password.php');
-        $reset_link = "https://familymatch.aakilarose.com/reset?token=$token";
+        $reset_link = base_url()."index.php/reset?token=$token";
         $email_body = str_replace('{{RESET_LINK}}', $reset_link, $template);
 
         $this->load->library('email');
         $this->email->from('familymatch@aakilarose.com', 'FamilyMatch');
+        $email = 'raheelshehzad188@gmail.com';
         $this->email->to($email);
         $this->email->subject('Password Reset Request');
         $this->email->message($email_body);

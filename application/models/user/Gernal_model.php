@@ -27,6 +27,7 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
     $user_id = !empty($filters['user_id']) ? (int)$filters['user_id'] : 0;
     $params[] = $user_id; // for is_like
     $params[] = $user_id; // for is_wink
+    $params[] = $user_id; // for is_friend
 
     $sql = "
         SELECT 
@@ -54,7 +55,13 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
                 FROM profile_wink pw
                 WHERE pw.user_id = ? AND pw.profile_id = p.id
                 LIMIT 1
-            ) AS is_wink
+            ) AS is_wink,
+            (
+                SELECT 1
+                FROM friendships f
+                WHERE f.user_id = ? AND f.friend_id = p.user_id
+                LIMIT 1
+            ) AS is_friend
         FROM profiles p
         LEFT JOIN genders g ON p.gender = g.id
         LEFT JOIN referrals r ON p.reffer_id = r.id
@@ -128,6 +135,7 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
         }
         $row->is_like = $row->is_like ? 1 : 0;
         $row->is_wink = $row->is_wink ? 1 : 0;
+        $row->is_friend = $row->is_friend ? 1 : 0;
     }
 
     return $query->result();
@@ -147,22 +155,22 @@ public function get_guest_profiles($limit = 10, $offset = 0, $filters = []) {
     }
 
     // Update family profile
-    public function get_states($data) {
-        if(isset($data['country_id']))
+    public function get_states($country_id) {
+        if(isset($country_id) && $country_id)
         {
-            $this->where('country_id',$data['country_id']);
+            $this->db->where('country_id',$country_id);
         }
         return $this->db->get('states')->result_array();
     }
     public function get_options($id) {
         return $op = $this->db->where('question_id',$id)->get('survey_options')->result_array();
     }
-    public function get_cities($data) {
-        if(isset($data['state_id']))
+    public function get_cities($state_id) {
+        if($state_id)
         {
-            $this->where('state_id',$data['state_id']);
+            $this->db->where('state_id',$state_id);
         }
-        return $this->db->get('states')->result_array();
+        return $this->db->get('cities')->result_array();
     }
 public function get_all_questions_with_options() {
     $question = $this->db ->get('survey_questions')->result_array();
